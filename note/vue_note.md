@@ -18,3 +18,57 @@
             * 数组常用方法：过滤/加工数组，筛选最值等
             * axios：async await
             * promise...
+    
+* **第一章 Vue核心**
+    * 1.1 Vue简介
+        * 1.1.1 官网
+            * 1. 英文官网: https://vuejs.org/
+            * 2. 中文官网: https://cn.vuejs.org/
+        * 1.1.2 介绍与描述
+            * 1. 动态构建用户界面的渐进式 JavaScript 框架
+            * 2. 作者：尤玉溪
+        * 1.1.3 Vue的特点：
+            * 1. 遵循MVVM模式
+            * 2. 编码简介，体积小，运行效率高，适合移动端/PC端
+            * 3. 它本身只关注 UI, 也可以引入其它第三方库开发项目
+        * 1.1.4 与其他JS框架的关联
+            * 1. 借鉴Angular的模板和数据绑定技术
+            * 2. 借鉴React的组件化和虚拟DOM技术
+        * 1.1.5 Vue周边库
+            * 1. vue-cli：vue脚手架
+            * 2. vue-resource
+            * 3. axios
+            * 4. vue-router：路由
+            * 5. vuex：状态管理
+            * 6. elemnt-ui：给予vue的UI组件库(PC端)
+    * 1.2 初识Vue
+        * ```
+            <!-- 准备一个容器 -->
+            <div id="root">
+                <h1>hello，尚硅谷！</h1>
+            </div>
+          ```
+        * ![hello,尚硅谷！](images/hello,shangguigu.png)
+        * 创建Vue实例，Vue实例化传且只传一个参数，并且类型是一个对象，管这种对象叫配置对象。像axios，传递的参数也是配置对象，配置对象的key值和value值都有要求，要用指定的，不能乱写，Vue的配置对象也一样。配置对象内的数据，只供与实例绑定的容器使用，以外的管不着。
+            * 1. 想让Vue工作，就必须创建一个Vue实例，且要传入一个配置对象
+            * 2. root容器里的代码依然符合html规范，只不过混入了一些特殊的Vue语法
+                * ```<div id="root"><h1>Hello,{{name}}</h1></div>```中，{{name}}就是特殊语法
+            * 3. root容器的代码被称为【Vue模板】
+            * ```
+                <!-- 创建Vue实例 -->
+                const v=new Vue({
+                    // 与容器建立关系，el用于制订单那个钱Vue实例为哪个容器服务，值通常为css选择器字符串, 
+                    // el:'#root'，也可以写成el:document.getElementById('root')
+                    el:'#root',
+                    data:{ //data中用于存储数据，数据供el指定的容器使用，值先写成一个对象
+                        name:'尚硅谷',
+                    }
+                })
+              ```
+    * 1.3 模板语法
+* **第二章 Vue组件化编程**
+* **第三章 使用Vue脚手架**
+* **第四章 Vue中的ajax**
+* **第五章 vuex**
+* **第六章 vue-router**
+* **第七章 Vue UI组件库**
