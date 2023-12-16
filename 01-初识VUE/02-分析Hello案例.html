@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初识Vue</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 
+        注意区分：js表达式和js代码(js语句)
+            1. 表达式：一个表达式会产生一个值，可以放在任何一个需要值的地方：
+                (1). a
+                (2). a+b                加法运算表达式
+                (3). demo(1)            函数调用表达式
+                (4). x===y ? 'a' : 'b'  三元表达式
+            2. js代码(语句)
+                (1). if(){}
+                (2). for(){}
+     -->
+
+    <!-- 准备一个容器 -->
+    <div id="root">
+        <h1>Hello,{{name}},{{address}}</h1>
+    </div>
+    
+    <script type="text/javascript">
+        Vue.config.productionTip=true  //组织vue在启动时生成生产提示。
+
+        // 创建Vue实例
+        new Vue({
+            // 与容器建立关系,el用于制订单那个钱Vue实例为哪个容器服务,值通常为css选择器字符串, 
+            // el:'#root',也可以写成el:document.getElementById('root')
+            el:'#root',
+            data:{ //data中用于存储数据，数据供el指定的容器使用，值先写成一个对象
+                name:'尚硅谷',
+                address:'深圳'
+            }
+        })
+    </script>
+</body>
+</html>
