@@ -65,40 +65,41 @@
                     }
                 })
               ```
-        * 一个Vue实例不能同时接管两个容器，Vue实例和容器是一一对应的关系，真实开发中只有一个Vue实例，并且会配合着组件一起使用。
-            * ```
-                <!-- 准备一个容器 -->
-                <div id="root">
-                    <h1>Hello,{{name}},{{address}}</h1>
-                </div>
-                <div id="root2">
-                    <h1>Hello,{{name}},{{address}}</h1>
-                </div>
-                <script type="text/javascript">
-                    Vue.config.productionTip=false  //组织vue在启动时生成生产提示。
+            * 4. 一个Vue实例不能同时接管两个容器，Vue实例和容器是一一对应的关系。
+                * ```
+                    <!-- 准备一个容器 -->
+                    <div id="root">
+                        <h1>Hello,{{name}},{{address}}</h1>
+                    </div>
+                    <div id="root2">
+                        <h1>Hello,{{name}},{{address}}</h1>
+                    </div>
+                    <script type="text/javascript">
+                        Vue.config.productionTip=false  //组织vue在启动时生成生产提示。
 
-                    // 创建Vue实例
-                    new Vue({
-                        // 与容器建立关系,el用于制订单那个钱Vue实例为哪个容器服务,值通常为css选择器字符串, 
-                        // el:'#root',也可以写成el:document.getElementById('root')
-                        el:'#root',
-                        data:{ //data中用于存储数据，数据供el指定的容器使用，值先写成一个对象
-                            name:'尚硅谷',
-                            address:'深圳'
-                        }
-                    })
-                    new Vue({
-                        el:'#root2',
-                        data:{
-                            name:'atguigu',
-                            address:'北京昌平'
-                        }
-                    })
-              ```
-            * ![Vue实例和容器是一一对应的关系，不能一个Vue实例对多个容器或多个Vue实例对一个容器](images/一个萝卜，一个坑，一个Vue实例对应一个容器.png)
-            * 写在容器里的{{xxx}}里的代码必须写JS表达式，且xxx可以自动读取到data中的所有属性。
-            * 一旦data中的数据发生改变，页面中用到该数据的地方也会自动更新
-                * ![根组件，鼠标悬停在data的属性的值上还可以修改其值](images/打开vue的开发者工具后展示的根组件.png)
+                        // 创建Vue实例
+                        new Vue({
+                            // 与容器建立关系,el用于制订单那个钱Vue实例为哪个容器服务,值通常为css选择器字符串, 
+                            // el:'#root',也可以写成el:document.getElementById('root')
+                            el:'#root',
+                            data:{ //data中用于存储数据，数据供el指定的容器使用，值先写成一个对象
+                                name:'尚硅谷',
+                                address:'深圳'
+                            }
+                        })
+                        new Vue({
+                            el:'#root2',
+                            data:{
+                                name:'atguigu',
+                                address:'北京昌平'
+                            }
+                        })
+                  ```
+                * ![Vue实例和容器是一一对应的关系，不能一个Vue实例对多个容器或多个Vue实例对一个容器](images/一个萝卜，一个坑，一个Vue实例对应一个容器.png)
+            * 5. 真实开发中只有一个Vue实例，并且会配合着组件一起使用。
+            * 6. 写在容器里的{{xxx}}里的代码必须写JS表达式，且xxx可以自动读取到data中的所有属性。
+            * 7. 一旦data中的数据发生改变，页面中用到该数据的地方也会自动更新
+                    * ![根组件，鼠标悬停在data的属性的值上还可以修改其值](images/打开vue的开发者工具后展示的根组件.png)
     * 1.3 模板语法
         * 1.3.1 效果
             * ![插值语法和指令语法效果](images/插值和指令语法.png)
