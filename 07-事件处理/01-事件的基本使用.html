@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01-事件的基本使用</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <h2>欢迎来到{{name}}学习</h2>
+        <!-- <button v-on:click="showInfo">点我提示信息</button> -->
+        <button @click="showInfo1">点我提示信息1(不传参)</button>
+        <button @click="showInfo2($event,66)">点我提示信息2(传参)</button>
+
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+    
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            name:'尚硅谷',
+            address:'北京'
+        },
+        methods:{
+            // 函数不能是箭头函数，只能是普通函数，否则this指向不同(箭头函数this为Window，普通函数才是vm，也就是Vue实例)，会导致后续出现一系列问题
+            showInfo1(event) {
+                // console.log(event.target.innerText);
+                // console.log(this===vm);  //此处的this是vm，也就是Vue实例对象
+                alert('你好')
+            },
+            showInfo2(event,number) {
+                // console.log(event.target.innerText);
+                // console.log(this===vm);  //此处的this是vm，也就是Vue实例对象
+                console.log(event,number);  //PointerEvent,66
+                // alert('hello')
+            }
+        }
+    })
+</script>
+</html>

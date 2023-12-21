@@ -166,7 +166,38 @@
             * 在getter/setter内部去操作(读/写)，data中对应的属性。
             * ![数据代理图示](images/数据代理图示.png)
     * 1.8 事件处理
-        * 1.8.1 
+        * 1.8.1 效果
+        * 1.8.2 绑定监听/事件的基本使用
+            * 1. 使用v-on:xxx 或 @xxx 绑定事件，其中xxx是事件名；
+            * 2. 事件的回调需要配置在methods对象中，最终会在vm上；
+            * 3. methods中配置的函数，不可以使用箭头函数，否则this的指向就不是vm，而是Window；
+            * 4. methods中配置的函数，都是被Vue所管理的函数，this的指向是vm或组件实例对象
+            * 5. @click="demo" 或 @click="demo($event)" 效果一直，但后者可以传参。
+                * ```
+                    const vm=new Vue({
+                        el:'#root',
+                        data:{
+                            name:'尚硅谷',
+                            address:'北京'
+                        },
+                        methods:{
+                            // 函数不能是箭头函数，只能是普通函数，否则this指向不同(箭头函数this为Window，普通函数才是vm，也就是Vue实例)，会导致后续出现一系列问题
+                            showInfo1(event) {
+                                // console.log(event.target.innerText);
+                                // console.log(this===vm);  //此处的this是vm，也就是Vue实例对象
+                                alert('你好')
+                            },
+                            showInfo2(event,number) {
+                                // console.log(event.target.innerText);
+                                // console.log(this===vm);  //此处的this是vm，也就是Vue实例对象
+                                console.log(event,number);  //PointerEvent,66
+                                // alert('hello')
+                            }
+                        }
+                    })
+                  ```
+        * 1.8.3 事件修饰符
+        * 1.8.4 按键修饰符
 
             
 * **第二章 Vue组件化编程**
