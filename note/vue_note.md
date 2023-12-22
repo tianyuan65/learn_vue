@@ -197,6 +197,46 @@
                     })
                   ```
         * 1.8.3 事件修饰符
+            * 1. prevent：阻止默认事件(常用)，一般点击弹出的提示框后会跳转到指定的网页中，给点击事件加上.prevent就不会跳转。
+                * ```<a href="https://github.com/tianyuan65" @click.prevent="showInfo">click to baidu</a>```
+            * 2. stop：阻止事件冒泡(常用)，冒泡事件会从子级冒到父级，添加.stop后不光不会从子级冒到父级，也不会从父级继承到子级。
+                * ```
+                    <div class="demo1" @click="showInfo">
+                        <button @click.stop="showInfo">click to show information</button>
+                    </div>
+                  ```
+            * 3. once：事件只触发一次(常用)，原本点击几次按钮就会弹出几次提示框，添加.once后，只会触发一次，第二次开始就不会触发。
+                * ```<button @click.once="showInfo">click to show information</button>```
+            * 4. capture：使用事件的捕获模式，添加该修饰符前，会先捕获子级，再捕获父级元素，添加.capture后会先捕获父级元素，再捕获子级。
+                * ```
+                    <div class="box1" @click.capture="showMsg(1)">
+                        div1
+                        <div class="box2" @click="showMsg(2)">div2</div>
+                    </div>
+                  ```
+            * 5. self：只有event.target是当前操作的元素时才触发事件，点击的元素是什么，就输出什么，点了子级元素，绝不会展示父级元素。
+                * ```
+                    <div class="demo1" @click.self="showInfo">
+                        <button @click="showInfo">click to show information</button>
+                    </div>
+                  ```
+                * ![点击的是什么，便输出什么](images/self修饰符，分别点击div和button后输出的结果.png)
+            * 6. passive：事件的默认行为立即执行，无需等待事件回调执行完毕，给鼠标滚轮事件添加该修饰符，首先执行滚轮事件，而不是触发滚轮事件的函数。
+                * ```
+                    <ul @wheel.passive="demo" class="list">
+                        <li>1</li>
+                        <li>2</li>
+                        <li>3</li>
+                        <li>4</li>
+                    </ul>
+
+                    demo(){
+                        for (let i = 0; i < 100; i++) {
+                            console.log('@@');
+                        }
+                        console.log('scrolled to die');
+                    }
+                  ```
         * 1.8.4 按键修饰符
 
             
