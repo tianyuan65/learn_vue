@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>键盘事件</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <h2>欢迎来到{{name}}学习</h2>
+        <!-- 键盘事件.enter回车键别名 -->
+        <input type="text" placeholder="按下回车提示输入" @keydown.enter="showInfo">
+        <hr/>
+        <!-- 按键修饰符(系统修饰键)也可以按照要求连写 -->
+        <input type="text" placeholder="按下回车提示输入" @keydown.ctrl.y="showInfo">
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+    // 自定义按键别名
+    // Vue.config.keyCodes.huiche=13
+    
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            name:'尚硅谷'
+        },
+        methods:{
+            showInfo(event){
+                // if (event.keyCode !== 13)  return console.log(event.keyCode);
+                // console.log(event.target.value);
+                console.log(event.keyCode,event.target.value);
+            }
+        }
+    })
+</script>
+</html>

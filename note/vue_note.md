@@ -237,7 +237,45 @@
                         console.log('scrolled to die');
                     }
                   ```
+            * 补充：
+                *  修饰符可以连续写，以下面的代码为例，可以先阻止冒泡，再阻止默认跳转，也可以先阻止默认跳转，再阻止冒泡。虽然写法有出入，但效果是一样的。
+                    * ```
+                        <!-- 既阻止冒泡，又阻止默认事件 -->
+                        <div class="demo1" @click="showInfo">
+                            <!-- 先阻止冒泡，再阻止默认跳转，也可以是.prevent.stop，那就是先阻止默认事件，后阻止冒泡 -->
+                            <a href="https://github.com/tianyuan65" @click.prevent.stop="showInfo">click to show information</a>
+                        </div>
+                      ```
         * 1.8.4 按键修饰符
+            * 1. Vue中常用的按键别名：意思是，添加了这些按键别名的话，输入内容后，按了添加的按键别名才可以看到输出，如：``` <input type="text" placeholder="按下回车提示输入" @keyup.enter="showInfo">```
+                * 回车 => enter
+                * 删除 => delete(捕获“删除”和“退格”键)
+                * 退出 => esc
+                * 空格 => space
+                * 换行 => tab，该按键别名只能搭配@keydown使用，因为它本身的特殊性，会把焦点从当前元素上切走，按下tab键，还没抬起来焦点就被切走了，这就导致无法正常触发事件。
+                * 上 => up
+                * 下 => down
+                * 左 => left
+                * 右 => right
+            * 2. Vue未提供别名的按键，可以使用按键原始的key值去绑定，但注意要转为kebab-case(短横线命名)
+            * 3. 系统修饰键(用法特殊)：ctrl、alt、shift、meta
+                * 配合keyup使用：按下修饰键的同时，再按下其他键，随后释放其他键，事件才被触发
+                    * ![eg：按下ctrl键和其他键后，释放其他键才出发结果](images/keyup和ctrl.png)
+                * 配合keydown使用：正常触发事件，与tab一样只能是配合keydown使用。
+            * 4. 也可以使用keyCode去指定具体的按键(不推荐)，```@keydown.13```，以回车键为例，但不被推荐了
+            * 5. Vue.config.keyCodes.自定义键名 = 键码，可以去定制按键别名
+                * ```
+                    <input type="text" placeholder="按下回车提示输入" @keydown.huiche="showInfo">
+                    // 自定义按键别名
+                    Vue.config.keyCodes.huiche=13
+                  ```
+            * 补充：
+                * 按键修饰符也可以按照指定要求连写，以下方代码为例。
+                    * ```
+                        <!-- 按键修饰符也可以按照要求连写 -->
+                        <input type="text" placeholder="按下回车提示输入" @keydown.ctrl.y="showInfo">
+                      ```
+                    * ![按键修饰符连写与没连写对比](images/系统修饰符连写输出结果.png)
 
             
 * **第二章 Vue组件化编程**
