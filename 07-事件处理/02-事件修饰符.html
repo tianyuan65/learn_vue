@@ -66,6 +66,12 @@
             <li>3</li>
             <li>4</li>
         </ul>
+
+        <!-- 既阻止冒泡，又阻止默认事件 -->
+        <div class="demo1" @click="showInfo">
+            <!-- 先阻止冒泡，再阻止默认跳转，也可以是.prevent.stop，那就是先阻止默认事件，后阻止冒泡 -->
+            <a href="https://github.com/tianyuan65" @click.prevent.stop="showInfo">click to show information</a>
+        </div>
     </div>
 </body>
 <script type="text/javascript">
