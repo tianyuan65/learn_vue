@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>姓名案例-methods实现</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        姓：<input type="text" v-model="firstName">
+        <br/>
+        <br/>
+        名：<input type="text" v-model="lastName">
+        <br/>
+        <br/>
+        <!-- 在插值语法里，把showName方法调用后的返回值插入到这个位置；但是只写showName的话，只是把showName这个函数插入到了这个位置 -->
+        姓名：<span>{{showName()}}</span>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            firstName:'张',
+            lastName:'三'
+        },
+        methods:{
+            // 该方法不作为事件的回调使用，要我本人自己去调用
+            showName(){
+                // 并返回其值
+                return this.firstName + '-' + this.lastName
+            }
+        }
+    })
+</script>
+</html>

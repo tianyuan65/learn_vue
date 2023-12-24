@@ -302,6 +302,38 @@
                         })
                     </script>
                   ```
+            * 2. methods实现，在展示姓名的标签span中，用插值将methods中的方法添加进去。若添加的是showName，那打印展示出来的就是showName这个函数；但若天家的事showName()，打印展示的才是调用showName方法后，其中返回的值，其返回值就用this.firstName/lastName来获取Vue实例中保存的姓和名。
+                * ```
+                    <!-- 容器 -->
+                    <div id="root">
+                        姓：<input type="text" v-model="firstName">
+                        <br/>
+                        <br/>
+                        名：<input type="text" v-model="lastName">
+                        <br/>
+                        <br/>
+                        <!-- 在插值语法里，把showName方法调用后的返回值插入到这个位置；但是只写showName的话，只是把showName这个函数插入到了这个位置 -->
+                        姓名：<span>{{showName()}}</span>
+                    </div>
+                    <script type="text/javascript">
+                        Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+                        const vm=new Vue({
+                            el:'#root',
+                            data:{
+                                firstName:'张',
+                                lastName:'三'
+                            },
+                            methods:{
+                                // 该方法不作为事件的回调使用，要我本人自己去调用
+                                showName(){
+                                    // 并返回其值
+                                    return this.firstName + '-' + this.lastName
+                                }
+                            }
+                        })
+                    </script>
+                  ```
             
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
