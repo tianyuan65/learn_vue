@@ -276,7 +276,32 @@
                         <input type="text" placeholder="按下回车提示输入" @keydown.ctrl.y="showInfo">
                       ```
                     * ![按键修饰符连写与没连写对比](images/系统修饰符连写输出结果.png)
+    * 1.9 计算属性
+        * 1.9.1 姓名案例的三种实现
+            * 1. 插值语法实现
+                * ```
+                    <!-- 容器 -->
+                    <div id="root">
+                        姓：<input type="text" v-model="firstName">
+                        <br/>
+                        <br/>
+                        名：<input type="text" v-model="lastName">
+                        <br/>
+                        <br/>
+                        姓名：<span>{{firstName}}-{{lastName}}</span>
+                    </div>
+                    <script type="text/javascript">
+                        Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
 
+                        const vm=new Vue({
+                            el:'#root',
+                            data:{
+                                firstName:'张',
+                                lastName:'三'
+                            }
+                        })
+                    </script>
+                  ```
             
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
