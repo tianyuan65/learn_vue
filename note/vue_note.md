@@ -334,6 +334,66 @@
                         })
                     </script>
                   ```
+            * 3. 计算属性实现
+                * 定义：要用的属性不存在，要通过**已有属性**计算得来。
+                * 原理：底层实现了Object.defineProperty方法提供的getter和setter。
+                * get函数什么时候执行？
+                    * (1). 初次读取时，会执行一次；
+                    * (2). 当依赖的数据发生改变时，会被在此调用。
+                * 优势：与methods实现相比，内部有缓存机制(复用)，效率更高，调试方便。
+                * 备注：
+                    * 1. 计算属性最终会出现在vm上，直接读取使用即可。
+                    * 2. 如果计算属性要被修改，那必须写set函数去响应修改，且set中要引起计算时依赖的数据发生改变。
+                * 完整代码如下：
+                * ```
+                    <!-- 容器 -->
+                    <div id="root">
+                        姓：<input type="text" v-model="firstName">
+                        <br/>
+                        <br/>
+                        名：<input type="text" v-model="lastName">
+                        <br/>
+                        <br/>
+                        <!-- 在插值语法里，把showName方法调用后的返回值插入到这个位置；但是只写showName的话，只是把showName这个函数插入到了这个位置 -->
+                        姓名：<span>{{fullName}}</span>
+                    </div>
+                    <script type="text/javascript">
+                        Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+                        const vm=new Vue({
+                            el:'#root',
+                            // 在data中存着的是属性
+                            data:{
+                                firstName:'张',
+                                lastName:'三'
+                            },
+                            // 计算属性放在这里，
+                            computed:{
+                                // 且计算属性里的对象属性也就是fullName不能直接赋值，要把整个计算过程配置成一个对象
+                                fullName:{
+                                    get(){
+                                        console.log('get his name');
+                                        // console.log(this);  //此处的this是Vue实例，也就是vm
+                                        return this.firstName + '-' + this.lastName
+                                    },
+                                    set(value){
+                                        // console.log('set the data',value);  //set the data 王五
+                                        const arr=value.split('-')
+                                        this.firstName=arr[0]
+                                        this.lastName=arr[1]
+                                    }
+                                }
+                            }
+                        })
+                    </script>
+                  ```
+                * 效果图们：
+                    * ![写在计算属性里的属性并不在_data里](images/计算属性中的属性不在_data内.png)
+                    * ![代码里的fullName不是初始设置的属性，它的值需要计算后才可得，所以所在的位置不在_data](images/vue开发者工具看的更明显.png)
+                    * ![get函数何时被调用？ 初次读取fullName时；所依赖的数据发生变化时，也就是firstName或lastName发生变化时](images/效果.png)
+                    * ![计算属性里的属性值需要配置set函数才可以修改属性上的值](images/计算属性也要配置set函数才可以修改其值.png)
+                    * ![set函数何时被调用？fullName的值被修改时](images/fullName被修改时，调用set函数.png)
+                    * ![配置了set函数并调用，才可以顺利修改姓和名](images/调用set函数，修改姓和名.png)
             
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
@@ -341,3 +401,7 @@
 * **第五章 vuex**
 * **第六章 vue-router**
 * **第七章 Vue UI组件库**
+
+* 补充
+    * 不改变就不用重新调用，在中间做了一个缓存，相当于这个值vue帮你存了，你用我就给你，随时用随时给，但是就不用再重复计算了
+    * 被Vue管理的函数绝对不可以写箭头函数，只能是一般函数，写成箭头函数的后果就是，函数内this的指向不再是Vue实例，而是Window。但向后端发送axios请求时，必须要用箭头函数，普通函数不行。

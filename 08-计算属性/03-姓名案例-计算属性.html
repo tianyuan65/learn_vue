@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>姓名案例-计算属性</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        姓：<input type="text" v-model="firstName">
+        <br/>
+        <br/>
+        名：<input type="text" v-model="lastName">
+        <br/>
+        <br/>
+        <!-- 在插值语法里，把showName方法调用后的返回值插入到这个位置；但是只写showName的话，只是把showName这个函数插入到了这个位置 -->
+        姓名：<span>{{fullName}}</span>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    const vm=new Vue({
+        el:'#root',
+        // 在data中存着的是属性
+        data:{
+            firstName:'张',
+            lastName:'三'
+        },
+        // 计算属性放在这里，
+        computed:{
+            // 且计算属性里的对象属性也就是fullName不能直接赋值，要把整个计算过程配置成一个对象
+            fullName:{
+                // get的作用：当有人读取fullName时，get就会被调用，且返回值就作为fullName的值
+                // get什么时候调用？1. 初次读取fullName时；2. 所依赖的数据发生变化时，也就是firstName或lastName发生变化时
+                get(){
+                    console.log('get his name');
+                    // console.log(this);  //此处的this是Vue实例，也就是vm
+                    return this.firstName + '-' + this.lastName
+                },
+                // fullName以后会被修改的话就写set，但只是从data中取值的话就不用写
+                // set什么时候调用？当fullName被修改时
+                set(value){
+                    // console.log('set the data',value);  //set the data 王五
+                    const arr=value.split('-')
+                    this.firstName=arr[0]
+                    this.lastName=arr[1]
+                }
+            }
+        }
+    })
+</script>
+</html>
