@@ -390,10 +390,27 @@
                 * 效果图们：
                     * ![写在计算属性里的属性并不在_data里](images/计算属性中的属性不在_data内.png)
                     * ![代码里的fullName不是初始设置的属性，它的值需要计算后才可得，所以所在的位置不在_data](images/vue开发者工具看的更明显.png)
-                    * ![get函数何时被调用？ 初次读取fullName时；所依赖的数据发生变化时，也就是firstName或lastName发生变化时](images/效果.png)
+                    * ![get函数何时调用？初次读取fullName时；](images/计算属性中的函数如何调用并获取其值.png)
+                    * ![get函数何时被调用？所依赖的数据发生变化时，也就是firstName或lastName发生变化时](images/效果.png)
                     * ![计算属性里的属性值需要配置set函数才可以修改属性上的值](images/计算属性也要配置set函数才可以修改其值.png)
                     * ![set函数何时被调用？fullName的值被修改时](images/fullName被修改时，调用set函数.png)
                     * ![配置了set函数并调用，才可以顺利修改姓和名](images/调用set函数，修改姓和名.png)
+            * 补充，计算属性简写版
+                * 有个前提条件，一旦确定计算属性只考虑读取(读取Vue实例中的属性)，不考虑修改(不在控制台等地方中修改Vue实例的属性)时，也就是只读不改时，才可以使用简写形式。且此时fullName就当做函数用，这个函数就对应上面代码的get函数，fullName代表计算属性的名字，也代表函数的名。代码如第一个，再进一步简写可得第二个代码段，表面上fullName是一个函数，但实际上，是fullName函数执行完后，向Vue实例放了一个叫fullName的属性，此时Vue实例中fullName属性的值就是fullName函数调用的结果。效果和完整版是一样的，图片就不展示了。
+                    * ```
+                        fullName:function () {
+                            console.log('get his name');
+                            // console.log(this);  //此处的this是Vue实例，也就是vm
+                            return this.firstName + '-' + this.lastName
+                        }
+                      ```
+                    * ```
+                        fullName () {
+                            console.log('get his name');
+                            // console.log(this);  //此处的this是Vue实例，也就是vm
+                            return this.firstName + '-' + this.lastName
+                        }
+                      ```
             
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
@@ -405,3 +422,4 @@
 * 补充
     * 不改变就不用重新调用，在中间做了一个缓存，相当于这个值vue帮你存了，你用我就给你，随时用随时给，但是就不用再重复计算了
     * 被Vue管理的函数绝对不可以写箭头函数，只能是一般函数，写成箭头函数的后果就是，函数内this的指向不再是Vue实例，而是Window。但向后端发送axios请求时，必须要用箭头函数，普通函数不行。
+    * 在容器里/模板里写代码的时候，想好要读取的是什么，是data中配置的数据，还是methods中的配置的方法，还是computed中配置的计算属性。

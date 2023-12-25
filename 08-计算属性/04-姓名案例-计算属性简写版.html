@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>姓名案例-计算属性简写版</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        姓：<input type="text" v-model="firstName">
+        <br/>
+        <br/>
+        名：<input type="text" v-model="lastName">
+        <br/>
+        <br/>
+        姓名：<span>{{fullName}}</span>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    const vm=new Vue({
+        el:'#root',
+        // 在data中存着的是属性
+        data:{
+            firstName:'张',
+            lastName:'三'
+        },
+        computed:{
+            // 以下为完整版写法
+            // fullName:{
+            //     get(){
+            //         console.log('get his name');
+            //         // console.log(this);  //此处的this是Vue实例，也就是vm
+            //         return this.firstName + '-' + this.lastName
+            //     },
+            //     set(value){
+            //         // console.log('set the data',value);  //set the data 王五
+            //         const arr=value.split('-')
+            //         this.firstName=arr[0]
+            //         this.lastName=arr[1]
+            //     }
+            // }
+
+            // 以下为简写版
+            // 此时fullName就当做函数用，这个函数就对应上面代码的get函数，fullName代表计算属性的名字
+            fullName:function () {
+                console.log('get his name');
+                // console.log(this);  //此处的this是Vue实例，也就是vm
+                return this.firstName + '-' + this.lastName
+            }
+        }
+    })
+</script>
+</html>
