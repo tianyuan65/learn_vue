@@ -445,7 +445,40 @@
                     * ![来回点击按钮，可在控制台查看到isHot的值的变化](images/点击按钮切换天气状态.png)
                     * ![点击按钮，在开发者工具中查看的结果](images/开发者工具中点击切换天气按钮后的天气状态.png)
                     * ![将在data中配置的isHot属性的值改为false](images/在Vue开发者工具中将isHot的值改为false的结果.png)
-            * 2. 监视属性完成天气案例，
+            * 2. 监视属性watch
+                * (1). 当贝监视的属性变化时，回调函数自动调用你，进行相关操作
+                * (2). 监视的属性必须存在，才能进行监视！！
+                * (3). 监视属性完成天气案例方法1，Vue实例中配置watch属性。在watch中添加想要监视的属性名，并为其配置对象，在其中设置handler函数，handler函数在监视的属性的值(在这里是isHot)发生改变时，会被调用。所以，总结的话，想要监视哪个属性，watch属性中，就写那个想要监视的属性名，并为其配置对象，比如computed属性中的info也可以被监视，代码和效果图就不写了。
+                * ![handler函数会在坚实的属性的值发生改变时，被调用](images/watch中isHot配置对象中的handler函数何时被调用.png)
+                * handler函数：handler函数还会接收两个参数，newValue和oldValue，该函数可以获取和输出新值和旧值，效果如下图：
+                    * ![接收两个参数，并输出新值和旧值](images/handler函数接收两个参数，可以获取并输出新值和旧值.png)
+                * immediate：初始化时，让handler调用一下，其默认值为false，但将其值改为true时，handler就会先于其他函数执行，如图：
+                    * ![将immediate属性的值改为true时](images/immediate的值为true时.png)
+                * ```
+                    watch:{
+                        // 想要监视谁，就写谁的名字，在这里是isHot；怎么监视，需要配置一个对象
+                        isHot:{
+                            // immediate属性，表示是否立即执行，默认值为false，handler函数不会立即执行，当将其值改为true时，handler函数就会被立即调用
+                            immediate:true,
+                            // handler函数什么时候调用？当isHot发生改变时
+                            handler(newValue,oldValue){
+                                console.log('handler function run,isHot is modified','new:',newValue,'old:',oldValue);
+                            }
+                        }
+                    }
+                  ```
+                * 监视属性完成天气案例方法2。首先保证，Vue实例已创建，创建实例后，用$watch()，来实现监视。$watch()中传递两个参数，第一个参数是要监视的属性/对象名，第二个参数就是为其配置的对象.
+                    * ```
+                        vm.$watch('isHot',{
+                            // immediate属性，表示是否立即执行，默认值为false，handler函数不会立即执行，当将其值改为true时，handler函数就会被立即调用
+                            // immediate:true,
+                            // handler函数什么候调用？当isHot发生改变时
+                            handler(newValue,oldValue){
+                                console.log('handler function run,isHot is modified','new:',newValue,'old:',oldValue);
+                            }
+                        })
+                    ```
+            * 补充：两种方式选择哪种？若很明确监视的属性/对象，在创建Vue时，已明确要监视的属性/对象，就用第一个，也就是把要监视的属性/对象名写在watch属性里；但若创建实例时，要监视的属性/对象不明确，后续需要根据用户的行为明确了需要监视的属性/对象时，就用第二个方法，也就是在外面使用$watch()，在其中$watch()内传递两个参数，第一个参数为要监视的属性/对象名，第二个参数就是为其配置的对象，对象内内容和第一个方法watch对象的内容一样，效果也一样。
 
 
 * **第二章 Vue组件化编程**
@@ -459,3 +492,4 @@
     * 不改变就不用重新调用，在中间做了一个缓存，相当于这个值vue帮你存了，你用我就给你，随时用随时给，但是就不用再重复计算了
     * 被Vue管理的函数绝对不可以写箭头函数，只能是一般函数，写成箭头函数的后果就是，函数内this的指向不再是Vue实例，而是Window。但向后端发送axios请求时，必须要用箭头函数，普通函数不行。
     * 在容器里/模板里写代码的时候，想好要读取的是什么，是data中配置的数据，还是methods中的配置的方法，还是computed中配置的计算属性。
+    * 对象里的key从来不自己包引号
