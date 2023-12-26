@@ -276,8 +276,8 @@
                         <input type="text" placeholder="按下回车提示输入" @keydown.ctrl.y="showInfo">
                       ```
                     * ![按键修饰符连写与没连写对比](images/系统修饰符连写输出结果.png)
-    * 1.9 计算属性
-        * 1.9.1 姓名案例的三种实现
+    * 1.9 计算属性与监视
+        * 1.9.1 计算属性-姓名案例的三种实现
             * 1. 插值语法实现
                 * ```
                     <!-- 容器 -->
@@ -411,7 +411,38 @@
                             return this.firstName + '-' + this.lastName
                         }
                       ```
-            
+        * 1.9.2 监视属性(watch)-天气案例
+            * 1. 用计算属性完成，配置computed属性，在computed中设置info函数，info函数中进行this.isHot值的判断，并返回其值，作为info属性的值，放在切换天气的模板中。methods中配置changeWeather函数，并绑定在切换天气状态的按钮上，changeWeather函数内将与this.isHot相反的值赋给它，以便在点击按钮时，切换天气状态。
+                * ```
+                    <div id="root">
+                        <h1>今天天气很{{info}}</h1>
+                        <button @click="changeWeather">切换天气</button>
+                    </div>
+                    <script type="text/javascript">
+                        Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+                        const vm=new Vue({
+                            el:'#root',
+                            data:{
+                                isHot:true
+                            },
+                            computed:{
+                                info(){
+                                    console.log(this.isHot);  //炎热时true，凉爽时false
+                                    return this.isHot?'炎热':'凉爽'
+                                }
+                            },
+                            methods:{
+                                changeWeather(){
+                                    this.isHot=!this.isHot
+                                }
+                            }
+                        })
+                    </script>
+                ```
+            * 
+
+
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
 * **第四章 Vue中的ajax**
