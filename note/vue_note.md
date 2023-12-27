@@ -523,6 +523,19 @@
                         * ![配置deep属性，bingjiangqizhi改为true，即可监测对象内部值变化](images/配置deep属性，并将其值改为true即可监测对象内部值变化.png)
                     * (1). Vue自身可以监测对象内部值的改变，但Vue提供的watch默认不可以！！
                     * (2). 使用watch时，根据数据的具体结构，决定是否采用深度监测。
+            * 4. 天气案例简写版。**注意：写简写版的前提条件为，不配置immediate和deep属性，监视属性里只有handler函数是才可以使用简写版。**和计算属性类似，函数名表示监视的属性，不考虑修改，只引用data属性中的数据，就直接把isHot写成函数形式，把handler函数的参数和函数内执行的内容搬到isHot中。除了已明确监视的属性，从而在Vue实例中配置watch属性的方法，还有在尚不明确监视的属性的时候，通过$watch()来监视的简写版。完整版中传递的第二个参数为一个对象，简写版中直接将函数作为第二个参数，并为其传递handler函数中传递的两个参数，函数内的情况与完整版一样，当然效果也一样。(注：函数不可以是箭头函数，会导致this指向window，在这里this的指向应是Vue实例。)
+                * ```
+                    isHot(newValue,oldValue){
+                        console.log('handler function run,isHot is modified','new:',newValue,'old:',oldValue);
+                    }
+                  ```
+                * ```
+                    // 监视属性方法2-简写版：
+                    // 完整版第二个参数应为对象，在此改为函数，并为该函数传递完整版handler函数的参数
+                    vm.$watch('isHot',function(newValue,oldValue){
+                        console.log('handler function run,isHot is modified','new:',newValue,'old:',oldValue);
+                    })
+                  ```
 
 
 * **第二章 Vue组件化编程**
