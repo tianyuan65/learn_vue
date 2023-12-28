@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>姓名案例-watch实现</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        姓：<input type="text" v-model="firstName">
+        <br/>
+        <br/>
+        名：<input type="text" v-model="lastName">
+        <br/>
+        <br/>
+        姓名：<span>{{fullName}}</span>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    const vm=new Vue({
+        el:'#root',
+        // 在data中存着的是属性
+        data:{
+            firstName:'张',
+            lastName:'三',
+            // 需要配置初始值
+            fullName:'张-三'
+        },
+        watch:{
+            // 监视姓
+            firstName(value){
+                // setTimeout(()=>{
+                    // console.log('setTimeout',this);   //setTimeout,Vue
+                    // 修改姓的时候，全名就是新修改的姓value+原先的名this.lastName
+                    this.fullName=value + '-' + this.lastName
+                // },1000)
+            },
+            // 监视名
+            lastName(value){
+                // 修改名的时候，全名就是原先的名this.firstName+新修改的名value
+                this.fullName=this.firstName + '-' + value
+            }
+        }
+    })
+</script>
+</html>
