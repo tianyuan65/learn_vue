@@ -572,6 +572,103 @@
                 * 两个重要的小原则：
                     * 1. 所被Vue管理的函数，最好写成普通函数，这样this的指向才是Vue实例或组件实例对象。
                     * 2. 所有不被Vue所管理的函数(定时器的回调，ajax的回调，Promise的回调等)，最好写成箭头函数，这样this的执行才是Vue实例或组件实例对象。
+    * 1.10 class与style绑定
+        * 1.10.1 理解
+            * 1. 在应用界面中，某个(些)元素的样式是变化的
+            * 2. class/style绑定就是专门用来实现动态样式效果的技术
+        * 1.10.2 class绑定
+            * 写法：:class="xxx"  xxx可以是字符串、对象、数组
+                * 1. 字符串写法适用于，类名不确定，要动态获取
+                    * ```
+                        <div class="basic" :class="mood" @click="changeMood">{{name}}</div>
+                        data:{
+                            name:'尚硅谷',
+                            mood:'normal',
+                        },
+                        methods:{
+                            changeMood(){
+                                // 点击div心情变为happy
+                                this.mood='happy'
+                            }
+                        }
+                      ```
+                * 2. 对象写法适用于，要绑定多个样式，个数不确定，名字也不确定。需要用到某个/些样式时，就把数据中心保存的属性对象中表示样式的的属性值改为true，即可应用。
+                    * ```
+                        <div class="basic" :class="classObj">{{name}}</div>
+                        data:{
+                            name:'尚硅谷',
+                            mood:'normal',
+                            classObj:{
+                                atguigu1:false,
+                                atguigu2:false,
+                                atguigu3:false
+                            }
+                        }
+                      ```
+                * 3. 数组写法适用于，要绑定多个样式，个数确定，名字也确定，但不确定用不用
+                    * ```
+                        <div class="basic" :class="classArr">{{name}}</div>
+                        data:{
+                            name:'尚硅谷',
+                            mood:'normal',
+                            classArr:['atguigu1','atguigu2','atguigu3']，
+                        },
+                        methods:{
+                            changeMood(){
+                                // 点击div随机转换心情，创建数组arr，将三个字符串塞进去，随后随机生成三个索引值中的一个作为arr的索引，去展示心情
+                                const arr=['happy','sad','normal']
+                                // 随机生成0,1,2中的一个
+                                const index=Math.floor(Math.random()*3)
+                                this.mood=arr[index]
+                            }
+                        }
+                      ```
+        * 1.10.3 style绑定，style绑定不常用，并且style绑定里的数组写法2，更不常用，因为代码冗长，一般用也是用数组写法1.
+            * 1. 对象写法： :style="{fontSize:xxx}" 其中的xxx是动态值
+                * ```
+                    <div class="basic" :style="styleObj">{{name}}</div>
+                    data:{
+                        name:'尚硅谷',
+                        mood:'normal',
+                        styleObj:{
+                            fontSize:'40px',
+                            color:'aqua'
+                        }
+                    }
+                  ```
+            * 2. 数组写法1：
+                * ```
+                    <div class="basic" :style="[styleObj,styleObj2]">{{name}}</div>
+                    data:{
+                        name:'尚硅谷',
+                        mood:'normal',
+                        styleObj:{
+                            fontSize:'40px',
+                            color:'aqua'
+                        },
+                        styleObj2:{
+                            background:'violet'
+                        }
+                    }
+                  ```
+            * 3. 数组写法2：
+                * ```
+                    <div class="basic" :style="styleArr">{{name}}</div>
+                    data:{
+                        name:'尚硅谷',
+                        mood:'normal',
+                        styleArr:[
+                            {
+                                fontSize:'40px',
+                                color:'#bfa'
+                            },
+                            {
+                                background:'gold'
+                            }
+                        ]
+                    }
+                  ```
+
 
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
