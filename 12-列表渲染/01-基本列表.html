@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01-基本列表</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 遍历数组 -->
+        <h2>人员列表(遍历数组)</h2>
+        <ul>
+            <!-- 使用v-for进行遍历，就需要配置key属性来为每一个结构打一个独一无二的标识，以免数据混乱，p代表遍历的每一项，index代表索引值 -->
+            <!-- <li v-for="p in personArr" :key="p.id"> -->
+            <li v-for="(p,index) in personArr" :key="index">
+                <!-- p这个形参可以直接在标签体内使用 -->
+                {{p.name}}-{{p.age}}--{{index}}
+            </li>
+        </ul><hr>
+
+        <!-- 遍历对象 -->
+        <h2>包信息(遍历对象)</h2>
+        <ul>
+            <li v-for="(value,key) of bags" :key="key">
+                {{key}}-{{value}}
+            </li>
+        </ul><hr>
+
+        <!-- 遍历字符串 -->
+        <h2>测试字符串(用得少)</h2>
+        <ul>
+            <li v-for="(char,index) of str" :key="index">
+                {{index}}-{{char}}
+            </li>
+        </ul><hr>
+
+        <!-- 遍历指定次数 -->
+        <h2>测试遍历指定次数(用得少)</h2>
+        <ul>
+            <li v-for="(number,index) of 5" :key="index">
+                {{index}}-{{number}}
+            </li>
+        </ul><hr>
+        <input type="text" placeholder="输入姓名">
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            personArr:[
+                {id:'001',name:'张三',age:18},
+                {id:'002',name:'李四',age:19},
+                {id:'003',name:'王五',age:20}
+            ],
+            bags:{
+                name:'dior',
+                price:'19999',
+                color:'black'
+            },
+            str:'hello'
+        }
+    })
+</script>
+</html>

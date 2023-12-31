@@ -691,7 +691,75 @@
                 * 适用于切换频率较高的场景
                 * 特点：不展示DOM元素，数据不是被移除，而仅仅是使用样式隐蔽掉
             * 3. 备注：使用v-if时，元素可能无法获取到，而使用v-show一定可以获取到
-    * 1.11 
+    * 1.11 列表渲染
+        * 1.11.1 列表显示指令
+            * v-for指令
+                * 1. 用于展示列表数据
+                * 2. 语法：v-for="(item,index) in xxx" :key="yyy"
+                * 3. 可遍历：数组、对象、字符串(用得很少)、指定次数(用得很少)
+                    * 遍历数组：
+                        * ```
+                            <h2>人员列表(遍历数组)</h2>
+                            <ul>
+                                <!-- 使用v-for进行遍历，就需要配置key属性来为每一个结构打一个独一无二的标识，以免数据混乱，p代表遍历的每一项，index代表索引值 -->
+                                <!-- <li v-for="p in personArr" :key="p.id"> -->
+                                <li v-for="(p,index) in personArr" :key="index">
+                                    <!-- p这个形参可以直接在标签体内使用 -->
+                                    {{p.name}}-{{p.age}}--{{index}}
+                                </li>
+                            </ul><hr>
+                            data:{
+                                personArr:[
+                                    {id:'001',name:'张三',age:18},
+                                    {id:'002',name:'李四',age:19},
+                                    {id:'003',name:'王五',age:20}
+                                ]
+                            }
+                          ```
+                        * ![遍历人员列表-遍历数组](images/v-for遍历数组.png)
+                    * 遍历对象：
+                        * ```
+                            <!-- 遍历对象 -->
+                            <h2>包信息(遍历对象)</h2>
+                            <ul>
+                                <li v-for="(value,key) of bags" :key="key">
+                                    {{key}}-{{value}}
+                                </li>
+                            </ul><hr>
+                            data:{
+                                bags:{
+                                    name:'dior',
+                                    price:'19999',
+                                    color:'black'
+                                }
+                            }
+                          ```
+                        * ![遍历包信息-遍历对象](images/v-for遍历对象.png)
+                    * 遍历字符串：
+                        * ```
+                            <!-- 遍历字符串 -->
+                            <h2>测试字符串(用得少)</h2>
+                            <ul>
+                                <li v-for="(char,index) of str" :key="index">
+                                    {{index}}-{{char}}
+                                </li>
+                            </ul><hr>
+                            data:{
+                                str:'hello'
+                            }
+                          ```
+                        * ![遍历字符串，用得少](images/v-for遍历字符串.png)
+                    * 遍历指定次数：数字代表遍历几次，参数number代表数值，参数index代表索引值
+                        * ```
+                            <!-- 遍历指定次数 -->
+                            <h2>测试遍历指定次数(用得少)</h2>
+                            <ul>
+                                <li v-for="(number,index) of 5" :key="index">
+                                    {{index}}-{{number}}
+                                </li>
+                            </ul><hr>
+                          ```
+                        * ![遍历指定次数，用得少](images/v-for遍历指定次数.png)
 
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
