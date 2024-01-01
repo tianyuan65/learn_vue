@@ -760,6 +760,112 @@
                             </ul><hr>
                           ```
                         * ![遍历指定次数，用得少](images/v-for遍历指定次数.png)
+        * 1.11.2 key的原理
+            * 面试题：react、vue中的key有什么作用？(key的内部原理)
+                * 1. 虚拟DOM中key的作用：
+                    * key是虚拟DOM对象的标识，当数据发生变化时，Vue会根据【新数据】生成【新的虚拟DOM】，随后Vue进行【新虚拟DOM】与【旧虚拟DOM】的差异比较，比较规则如下：
+                * 2. 对比规则：
+                    * (1). 旧虚拟DOM中找到了与新虚拟DOM相同的key：
+                        * a. 若虚拟DOM中内容没变，直接使用之前的真实DOM
+                        * b. 若虚拟DOM中内容变了，则生成新的真实DOM，随后替换掉页面中之前的真实DOM。
+                    * (2). 旧虚拟DOM中未找到新虚拟DOM相同的key，则创建新的真实DOM，随后渲染到页面。
+                * 3. 用index作为key属性的值可能会引发的问题：
+                    * a. 若对数据进行逆序添加、逆序删除(就是把新数据添加到最前面或把最前面的数据删除)等破坏顺序的操作，会产生没必要的真实DOM更新
+                    * b. 如果结构中还包含输入类的DOM，会产生错误DOM更新==>界面出现问题
+                    * ```
+                        <div id="root">
+                            <!-- 遍历数组 -->
+                            <h2>人员列表(遍历数组)</h2>
+                            <button @click.once="add">添加一个老6</button>
+                            <ul>
+                                <li v-for="(p,index) in personArr" :key="index">
+                                    {{p.name}}-{{p.age}}
+                                    <input type="text" placeholder="输入姓名">
+                                </li>
+                            </ul><hr>
+                        </div>
+                        const vm=new Vue({
+                            el:'#root',
+                            data:{
+                                personArr:[
+                                    {id:'001',name:'张三',age:18},
+                                    {id:'002',name:'李四',age:19},
+                                    {id:'003',name:'王五',age:20}
+                                ]
+                            },
+                            methods:{
+                                add(){
+                                    const p={id:'004',name:'老6',age:21}
+                                    this.personArr.unshift(p)
+                                }
+                            }
+                        })
+                      ```
+                    * ![上面描述的a和b的情况都出现了](images/使用index并逆序添加数据结果.png)
+                * 4. 开发中如何选择key？
+                    * a. 最好使用每条数据的唯一标识作为key属性的值，比如：id、手机号、身份证号、学号等；
+                        * ```
+                            <div id="root">
+                            <!-- 遍历数组 -->
+                            <h2>人员列表(遍历数组)</h2>
+                            <button @click.once="add">添加一个老6</button>
+                            <ul>
+                                <li v-for="(p,index) in personArr" :key="p.id">
+                                    {{p.name}}-{{p.age}}
+                                    <input type="text" placeholder="输入姓名">
+                                </li>
+                            </ul><hr>
+                            </div>
+                            const vm=new Vue({
+                                el:'#root',
+                                data:{
+                                    personArr:[
+                                        {id:'001',name:'张三',age:18},
+                                        {id:'002',name:'李四',age:19},
+                                        {id:'003',name:'王五',age:20}
+                                    ]
+                                },
+                                methods:{
+                                    add(){
+                                        const p={id:'004',name:'老6',age:21}
+                                        this.personArr.unshift(p)
+                                    }
+                                }
+                            })
+                          ```
+                        * ![使用p.id这种每条数据的唯一标识作为key的值并配合unshift](images/key使用p.id配合unshift.png)
+                    * b. 如果不存在对数据的逆序添加、逆序删除等破坏顺序操作，仅用于渲染列表用于展示。使用index作为key的值时没问题的。
+                        * ```
+                            <div id="root">
+                            <!-- 遍历数组 -->
+                            <h2>人员列表(遍历数组)</h2>
+                            <button @click.once="add">添加一个老6</button>
+                            <ul>
+                                <li v-for="(p,index) in personArr" :key="index">
+                                    {{p.name}}-{{p.age}}
+                                    <input type="text" placeholder="输入姓名">
+                                </li>
+                            </ul><hr>
+                            </div>
+                            const vm=new Vue({
+                                el:'#root',
+                                data:{
+                                    personArr:[
+                                        {id:'001',name:'张三',age:18},
+                                        {id:'002',name:'李四',age:19},
+                                        {id:'003',name:'王五',age:20}
+                                    ]
+                                },
+                                methods:{
+                                    add(){
+                                        const p={id:'004',name:'老6',age:21}
+                                        this.personArr.push(p)
+                                    }
+                                }
+                            })
+                          ```
+                        * ![不存在破坏顺序的逆序添加或删除时，index配合push方法使用](images/key使用index配合push方法.png)
+    * 
 
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
@@ -776,3 +882,7 @@
     * Vue默认是无法监视多级结构里的属性变化
     * computed是实时计算，watch是在数据发生变化的时候计算
     * v-if要最开始使用，且不允许被打断
+    * v-for中的key写与不写的处理：
+        * 
+    * 默认索引只是排序，不与内容进行绑定，也就是说同一个li里的元素不会因为索引绑定在一起。
+    * 虚拟DOM一致，则真实DOM复用

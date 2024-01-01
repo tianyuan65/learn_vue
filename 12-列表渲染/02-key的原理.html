@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02-key的原理</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 遍历数组 -->
+        <h2>人员列表(遍历数组)</h2>
+        <button @click.once="add">添加一个老6</button>
+        <ul>
+            <!-- 使用v-for进行遍历，就需要配置key属性来为每一个结构打一个独一无二的标识，以免数据混乱，p代表遍历的每一项，index代表索引值 -->
+            <!-- <li v-for="(p,index) in personArr" :key="p.id"> -->
+            <li v-for="(p,index) in personArr" :key="index">
+                <!-- p这个形参可以直接在标签体内使用 -->
+                {{p.name}}-{{p.age}}
+                <input type="text" placeholder="输入姓名">
+            </li>
+        </ul><hr>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            personArr:[
+                {id:'001',name:'张三',age:18},
+                {id:'002',name:'李四',age:19},
+                {id:'003',name:'王五',age:20}
+            ]
+        },
+        methods:{
+            add(){
+                const p={id:'004',name:'老6',age:21}
+                this.personArr.unshift(p)
+                // this.personArr.push(p)
+            }
+        }
+    })
+</script>
+</html>
