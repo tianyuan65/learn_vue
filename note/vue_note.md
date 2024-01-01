@@ -934,7 +934,55 @@
                         }
                     })
                   ```
-        
+        * 1.11.4 列表排序
+            * 需求描述：修改一下人员的年龄，并随意展示，添加三个按钮，点击年龄升序就是，从上到下按照年龄的从小到大排序展示；点击年龄降序就是与升序反之；原顺序就是恢复原数据中的排列方式并展示。
+                * ```
+                    <!-- 容器 -->
+                    <div id="root">
+                        <!-- 遍历数组 -->
+                        <h2>人员列表</h2>
+                        <input type="text" placeholder="请输入名字" v-model="keyWord">
+                        <button @click="sortType=2">年龄升序</button>
+                        <button @click="sortType=1">年龄降序</button>
+                        <button @click="sortType=0">原顺序</button>
+                        <ul>
+                            <!-- 在这里就不能遍历原数组了，会影响页面的展示，所以遍历filPerson数组就好 -->
+                            <li v-for="(p,index) in filPerson" :key="index">
+                                {{p.name}}-{{p.age}}--{{p.gender}}
+                            </li>
+                        </ul><hr>
+                    </div>
+                    const vm=new Vue({
+                        el:'#root',
+                        data:{
+                            keyWord:'',
+                            sortType:0,  //0代表原顺序；1代表降序；2代表升序
+                            // 原数据
+                            personArr:[
+                                {id:'001',name:'张雨绮',age:30,gender:'female'},
+                                {id:'002',name:'周雨彤',age:20,gender:'female'},
+                                {id:'003',name:'周杰伦',age:40,gender:'male'},
+                                {id:'004',name:'方逸伦',age:31,gender:'male'}
+                            ],
+                        },
+                        computed:{
+                            // 这么写的优势是keyWord的变化不用去监视，keyWord会参与filPerson的计算，
+                            // 只要keyWord的值改变，filPerson函数就会重新执行，也就可以获取最新的数据
+                            filPerson(){
+                                const arr = this.personArr.filter((p)=>{
+                                    // 计算的时候所依赖的数据(keyWord)发生变化
+                                    return p.name.indexOf(this.keyWord) !== -1
+                                })
+                                // 判断一下是否需要排序，sortType若等于0，压根就不会进入该判断
+                                if (this.sortType!==0) {
+                                    arr.sort((p1,p2)=>{return this.sortType===1 ? p2.age-p1.age: p1.age-p2.age})
+                                }
+                                // 无论如何要返回arr，要不然filPerson没值
+                                return arr
+                            }
+                        }
+                    })
+                  ```
 
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
