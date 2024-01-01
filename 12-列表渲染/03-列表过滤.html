@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03-列表过滤</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 遍历数组 -->
+        <h2>人员列表</h2>
+        <input type="text" placeholder="请输入名字" v-model="keyWord">
+        <ul>
+            <!-- 在这里就不能遍历原数组了，会影响页面的展示，所以遍历filPerson数组就好 -->
+            <li v-for="(p,index) in filPerson" :key="index">
+                {{p.name}}-{{p.age}}--{{p.gender}}
+            </li>
+        </ul><hr>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+    // 用watch实现
+    // const vm=new Vue({
+    //     el:'#root',
+    //     data:{
+    //         keyWord:'',
+    //         // 原数据
+    //         personArr:[
+    //             {id:'001',name:'张雨绮',age:19,gender:'female'},
+    //             {id:'002',name:'周雨彤',age:20,gender:'female'},
+    //             {id:'003',name:'周杰伦',age:21,gender:'male'},
+    //             {id:'004',name:'方逸伦',age:22,gender:'male'}
+    //         ],
+    //         // 用于存储过滤后的数据
+    //         filPerson:[]
+    //     },
+    //     watch:{
+    //         keyWord:{
+    //             // 改变数据前，立即让handler执行
+    //             immediate:true,
+    //             handler(value){
+    //                 // console.log('keyWord is changed',value);  //keyWord is changed 伦
+    //                 this.filPerson=this.personArr.filter((p)=>{
+    //                     return p.name.indexOf(value) !== -1
+    //                 })
+    //             }
+    //         }
+    //     }
+    // })
+
+    // 用computed实现
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            keyWord:'',
+            // 原数据
+            personArr:[
+                {id:'001',name:'张雨绮',age:19,gender:'female'},
+                {id:'002',name:'周雨彤',age:20,gender:'female'},
+                {id:'003',name:'周杰伦',age:21,gender:'male'},
+                {id:'004',name:'方逸伦',age:22,gender:'male'}
+            ],
+        },
+        computed:{
+            // 这么写的优势是keyWord的变化不用去监视，keyWord会参与filPerson的计算，
+            // 只要keyWord的值改变，filPerson函数就会重新执行，也就可以获取最新的数据
+            filPerson(){
+                return this.personArr.filter((p)=>{
+                    // 计算的时候所依赖的数据(keyWord)发生变化
+                    return p.name.indexOf(this.keyWord) !== -1
+                })
+            }
+        }
+    })
+</script>
+</html>
