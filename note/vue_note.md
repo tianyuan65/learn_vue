@@ -865,7 +865,76 @@
                             })
                           ```
                         * ![不存在破坏顺序的逆序添加或删除时，index配合push方法使用](images/key使用index配合push方法.png)
-    * 
+        * 1.11.3 列表过滤
+            * 需求描述：四个人的信息在页面中展示，根据在人员信息上方的输入框中输入的内容，筛选出与输入的内容符合的人员信息，并展示在页面上，若在人员信息中没有找到与输入的内容匹配的，就什么都不展示。两种方法：watch和computed，效果图就不展示了，展示起来麻烦。
+                * ```
+                    <!-- 容器 -->
+                    <div id="root">
+                        <!-- 遍历数组 -->
+                        <h2>人员列表</h2>
+                        <input type="text" placeholder="请输入名字" v-model="keyWord">
+                        <ul>
+                            <!-- 在这里就不能遍历原数组了，会影响页面的展示，所以遍历filPerson数组就好 -->
+                            <li v-for="(p,index) in filPerson" :key="index">
+                                {{p.name}}-{{p.age}}--{{p.gender}}
+                            </li>
+                        </ul><hr>
+                    </div>
+                    // 用watch实现
+                    const vm=new Vue({
+                        el:'#root',
+                        data:{
+                            keyWord:'',
+                            // 原数据
+                            personArr:[
+                                {id:'001',name:'张雨绮',age:19,gender:'female'},
+                                {id:'002',name:'周雨彤',age:20,gender:'female'},
+                                {id:'003',name:'周杰伦',age:21,gender:'male'},
+                                {id:'004',name:'方逸伦',age:22,gender:'male'}
+                            ],
+                            // 用于存储过滤后的数据
+                            filPerson:[]
+                        },
+                        watch:{
+                            keyWord:{
+                                // 改变数据前，立即让handler执行
+                                immediate:true,
+                                handler(value){
+                                    // console.log('keyWord is changed',value);  //keyWord is changed 伦
+                                    this.filPerson=this.personArr.filter((p)=>{
+                                        return p.name.indexOf(value) !== -1
+                                    })
+                                }
+                            }
+                        }
+                    })
+
+                    //用computed实现
+                    const vm=new Vue({
+                        el:'#root',
+                        data:{
+                            keyWord:'',
+                            // 原数据
+                            personArr:[
+                                {id:'001',name:'张雨绮',age:19,gender:'female'},
+                                {id:'002',name:'周雨彤',age:20,gender:'female'},
+                                {id:'003',name:'周杰伦',age:21,gender:'male'},
+                                {id:'004',name:'方逸伦',age:22,gender:'male'}
+                            ],
+                        },
+                        computed:{
+                            // 这么写的优势是keyWord的变化不用去监视，keyWord会参与filPerson的计算，
+                            // 只要keyWord的值改变，filPerson函数就会重新执行，也就可以获取最新的数据
+                            filPerson(){
+                                return this.personArr.filter((p)=>{
+                                    // 计算的时候所依赖的数据(keyWord)发生变化
+                                    return p.name.indexOf(this.keyWord) !== -1
+                                })
+                            }
+                        }
+                    })
+                  ```
+        
 
 * **第二章 Vue组件化编程**
 * **第三章 使用Vue脚手架**
