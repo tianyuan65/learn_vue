@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05-更新时的一个问题</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 遍历数组 -->
+        <h2>人员列表</h2>
+        <button @click="updateZhang">click to update 张雨绮</button>
+        <ul>
+            <!-- 在这里就不能遍历原数组了，会影响页面的展示，所以遍历filPerson数组就好 -->
+            <li v-for="(p,index) in personArr" :key="p.id">
+            <!-- <li v-for="(p,index) in filPerson" :key="index"> -->
+                {{p.name}}-{{p.age}}--{{p.gender}}
+            </li>
+        </ul><hr>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+    
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            // 原数据
+            personArr:[
+                {id:'001',name:'张雨绮',age:30,gender:'female'},
+                {id:'002',name:'周雨彤',age:20,gender:'female'},
+                {id:'003',name:'周杰伦',age:40,gender:'male'},
+                {id:'004',name:'方逸伦',age:31,gender:'male'}
+            ]
+        },
+        methods:{
+            updateZhang(){
+                // this.personArr[0].name='张老师'  //奏效
+                // this.personArr[0].age=32  //奏效
+                // this.personArr[0].gender='male'  //奏效
+                this.personArr[0]={id:'001',name:'张老师',age:32,gender:'male'}
+            }
+        }
+    })
+</script>
+</html>

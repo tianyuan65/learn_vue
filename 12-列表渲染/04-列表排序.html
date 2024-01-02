@@ -17,8 +17,10 @@
         <button @click="sortType=0">原顺序</button>
         <ul>
             <!-- 在这里就不能遍历原数组了，会影响页面的展示，所以遍历filPerson数组就好 -->
-            <li v-for="(p,index) in filPerson" :key="index">
+            <li v-for="(p,index) in filPerson" :key="p.id">
+            <!-- <li v-for="(p,index) in filPerson" :key="index"> -->
                 {{p.name}}-{{p.age}}--{{p.gender}}
+                <input type="text">
             </li>
         </ul><hr>
     </div>
