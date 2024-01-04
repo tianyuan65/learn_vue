@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>08-Vue.set的使用</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <h1>公司信息</h1>
+        <h2>姓名:{{firmInfo.name}}</h2>
+        <h2>公司:{{firmInfo.firmName}}</h2>
+        <h2>老板：{{firmInfo.boss}}</h2>
+        <hr>
+        <h1>员工信息</h1>
+        <button @click="addGender">click to add gender,default value is male</button>
+        <h2>姓名:{{staff.name}}</h2>
+        <h2 v-if="staff.gender">性别:{{staff.gender}}</h2>
+        <h2>年龄:真实{{staff.age.rAge}},对外{{staff.age.sAge}}</h2>
+        <h2>朋友们：</h2>
+        <ul>
+            <li v-for="(f,index) in staff.friends" :key="index">
+                {{f.name}}--{{f.age}}
+            </li>
+        </ul>
+
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            firmInfo:{
+                name:'yosh',
+                firmName:'于适工作室'
+            },
+            staff:{
+                name:'于适',
+                age:{
+                    rAge:18,
+                    sAge:28
+                },
+                friends:[
+                    {name:'tom',age:21},
+                    {name:'jerry',age:31}
+                ]
+            }
+        },
+        methods:{
+            addGender(){
+                Vue.set(this.staff,'gender','male')
+                // this.$set(this.staff,'gender','male')
+            }
+        }
+    })
+</script>
+</html>
