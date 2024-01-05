@@ -40,7 +40,9 @@
                 // this.personArr[0].name='张老师'  //奏效
                 // this.personArr[0].age=32  //奏效
                 // this.personArr[0].gender='male'  //奏效
-                this.personArr[0]={id:'001',name:'张老师',age:32,gender:'male'}
+                // 修改数组不能直接修改，需要调用数组特定的方法来修改，直接修改的话，Vue监测不到
+                // this.personArr[0]={id:'001',name:'张老师',age:32,gender:'male'}  //不奏效
+                this.personArr.splice(0,1,{id:'001',name:'张老师',age:32,gender:'male'})
             }
         }
     })
