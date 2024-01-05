@@ -984,7 +984,45 @@
                     })
                   ```
         * 1.11.5 Vue监测数据改变的原理
-            * Vue给Vue实例对象的_data中配置的每一条数据，都配置了get函数和set函数，当这些数据发生改变时，会响应并调用自己的那份set函数，并重新渲染页面。
+            * 1. Vue给Vue实例对象的_data中配置的每一条数据，都配置了get函数和set函数，当这些数据发生改变时，会响应并调用自己的那份set函数，并重新渲染页面。
+            * 2. 如何监测对象中的数据？
+                * 通过setter实现监视，且要在new Vue时就传入要监测的数据
+                    * ```
+                        const vm=new Vue({
+                            el:'#root',
+                            data:{
+                                name:'yosh',
+                                firmName:'于适工作室',
+                                staff:{
+                                    name:'于适',
+                                    age:{
+                                        rAge:18,
+                                        sAge:28
+                                    },
+                                    friends:[
+                                        {name:'tom',age:21}
+                                    ]
+                                }
+                            }
+                        })
+                      ```
+                    * ![和上面代码匹配的给每条数据配置的get、set函数](images/给每条数据配置的get和set函数.png)
+                    * (1). 对象中后追加的属性，Vue默认不做响应式处理
+                        * ![Vue不承认的，不做响应式处理的属性](images/通过控制台添加进去的属性，没有专属它的get和set函数.png)
+                    * (2). 如需给后添加的属性做响应式，请使用如下API：
+                        * Vue.set(target.propertyName/index.value)或vm.$set(target.propertyName/index.value)
+                        * ![Vue.set](images/Vue.set方法添加属性.png)
+                        * ![Vue.set添加响应式数据](images/使用Vue.set添加响应式数据.png)
+                        * ![vm.$set](images/vm.$set方法添加属性.png)
+                        * ![vm.$set添加响应式数据](images/vm.$set方法，参数一样，效果也一样.png)
+            * 3. 如何监测数组中的数据？
+                * 通过包裹数组更新元素的方法实现，本质就是做了两件事：
+                    * (1). 调用原生对应的方法(就是那7个方法)对数组进行更新
+                    * (2). 重新解析模板，进而更新页面
+            * 4. 在Vue修改数组中的某个元素一定要用如下方法：
+                * a. 使用这些API：push()、pop()、shift()、unshift()、splice()、sort()、reverse()
+                * b. Vue.set() 或 vm.$set()
+            * 特别注意：Vue.set() 和 vm.$set()只能给data里面的对象加属性，不能给vm或vm的根数据对象添加属性(vm的根数据对象就是vm._data)！！！！
 
 
 * **第二章 Vue组件化编程**
@@ -1006,3 +1044,6 @@
         * 
     * 默认索引只是排序，不与内容进行绑定，也就是说同一个li里的元素不会因为索引绑定在一起。
     * 虚拟DOM一致，则真实DOM复用
+    * 在_data里的数据，如果没有自己专属的get、set函数，它就不是一个响应式的数据，也就是既无法获取，也无法修改，简而言之，必须要在data对象里的属性才能被监听对象数据劫持，然后才能设置set方法来渲染界面。数据劫持就是数据已经交给vue来管了，操纵数据必须通过vue提供的方法来实现。数据劫持描述的是过程，数据代理针对的是某个数据。
+    
+    

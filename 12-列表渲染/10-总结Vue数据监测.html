@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-总结Vue数据监测</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <h1>人员信息</h1>
+        <button @click="artist.age++">年龄+1岁</button><br>
+        <button @click="addGender">添加特别属性，默认值：'male'</button><br>
+        <button @click="artist.gender='female'">修改性别</button><br>
+        <button @click="addFriend">在列表首位添加一个朋友</button><br>
+        <button @click="changeName">修改第一个朋友的名字为：张三</button><br>
+        <button @click="addSkill">添加一个技能</button><br>
+        <button @click="changeSkill">修改第一个技能为：潜水</button><br>
+        <button @click="removeBasketball">过滤技能中的篮球</button><br>
+
+        <h2>姓名:{{artist.name}}</h2>
+        <h2>年龄:{{artist.age}}</h2>
+        <h2 v-if="artist.gender">性别:{{artist.gender}}</h2>
+        <h2>朋友们：</h2>
+        <ul>
+            <li v-for="(f,index) in artist.friends" :key="index">
+                {{f.name}}--{{f.age}}
+            </li>
+        </ul>
+
+        <h2>技能：</h2>
+        <ul>
+            <li v-for="(s,index) in artist.skills" :key="index">
+                {{s}}
+            </li>
+        </ul>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            artist:{
+                name:'于适',
+                age:28,
+                skills:['篮球','武术','骑马'],
+                friends:[
+                    {name:'tom',age:21},
+                    {name:'jerry',age:31}
+                ]
+            }
+        },
+        methods:{
+            addGender(){
+                // Vue.set(this.artist,'gender','male')
+                this.$set(this.artist,'gender','male')
+            },
+            addFriend(){
+                // 这样添加的元素对象也是响应式的数据
+                this.artist.friends.unshift({name:'sam',age:19})
+            },
+            changeName(){
+                // this.artist.friends.splice(0,1,{name:'张三',age:19})
+                this.$set(this.artist.friends,0,{name:'张三',age:19})
+            },
+            addSkill(){
+                this.artist.skills.push('射箭')
+            },
+            changeSkill(){
+                // this.artist.skills.splice(0,1,'潜水')
+                Vue.set(this.artist.skills,0,'潜水')
+                // this.$set(this.artist.skills,0,'潜水')
+            },
+            removeBasketball(){
+                this.artist.skills=this.artist.skills.filter(b=>{
+                    return b !== '篮球'
+                })
+            }
+        }
+    })
+</script>
+</html>
