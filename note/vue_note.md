@@ -1023,6 +1023,21 @@
                 * a. 使用这些API：push()、pop()、shift()、unshift()、splice()、sort()、reverse()
                 * b. Vue.set() 或 vm.$set()
             * 特别注意：Vue.set() 和 vm.$set()只能给data里面的对象加属性，不能给vm或vm的根数据对象添加属性(vm的根数据对象就是vm._data)！！！！
+    * 1.12 收集表单数据
+        * 若：```<input type="text">```，则v-model收集的是value值，用户输入的就是value值
+        * 若：```<input type="radio">```，则v-model收集的是value值，且要给标签配置value值，因为这个目前不能输入，只能选或不选
+        * 若：```<input type="chaeckbox">```
+            * 1. 没有配置input的value属性，那么收集的就是checked(勾选 or 未勾选，是布尔值)，和type为radio的一样，只有选或不选
+            * 2. 配置input的value属性：
+                * (1). v-model初始值是非数组，那么收集的就是checked(勾选 or 未勾选，是布尔值)
+                * (2). v-model的初始值是数组，那么收集的就是value组成的数组
+            * 备注：v-model的三个修饰符：
+                * lazy：失去焦点再收集数据
+                * number：输入字符串转为有效的数字
+                * trim：输入，过滤首尾空格
+            * ![控制台输出输入的和选择的信息，可以看到都是响应式数据](images/控制台输出已选信息.png)
+            * ![将输入和选择的信息，转为json形式输出](images/控制台输出转成json的信息.png)
+            * ![把数据放在配置的userInfo属性内，方便读取](images/配置userInfo属性，将数据属性们放在userInfo里，这样方便使用.png)
 
 
 * **第二章 Vue组件化编程**
@@ -1045,5 +1060,6 @@
     * 默认索引只是排序，不与内容进行绑定，也就是说同一个li里的元素不会因为索引绑定在一起。
     * 虚拟DOM一致，则真实DOM复用
     * 在_data里的数据，如果没有自己专属的get、set函数，它就不是一个响应式的数据，也就是既无法获取，也无法修改，简而言之，必须要在data对象里的属性才能被监听对象数据劫持，然后才能设置set方法来渲染界面。数据劫持就是数据已经交给vue来管了，操纵数据必须通过vue提供的方法来实现。数据劫持描述的是过程，数据代理针对的是某个数据。
+    * input元素类型teype等于number的时候代表这个表单框只能输入数字，不能输入字母 ，但是要注意最终接受到的还是字符串，所以需要v-model.number，才能保证接收到的是数值
     
     

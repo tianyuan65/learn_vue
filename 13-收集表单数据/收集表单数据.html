@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收集表单数据</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <form @submit.prevent="demo">
+            <!-- 和下面的input做个关联，点击账号也可以获取焦点，要是不想写for和id的话，可以直接用label包住input，效果一样 -->
+            <!-- <label for="demo">账号:</label> -->
+            账号:<input type="text" v-model="userInfo.account"><br><br>
+            密码:<input type="password" v-model="userInfo.password"><br><br>
+            <!-- Vue会把数字自动转换为字符形式的数据，但因为年龄这种最好是数值形式的，所以给v-model加上.number，并将type属性的值设置为number，让Vue只接受数值形式的数据，不可能是字母或其他 -->
+            年龄:<input type="number" v-model.number="userInfo.age"><br><br>
+            性别:
+            男<input type="radio" name="gender" v-model="userInfo.gender" value="男">
+            女<input type="radio" name="gender" v-model="userInfo.gender" value="女"><br><br>
+            爱好:
+            <!-- 多组勾选框，要给input添加type属性值为checkbox，并还要给每个input添加value属性和给value设置独属的值，且还要把v-model所对应的值写成数组 -->
+            吃饭<input type="checkbox" v-model="userInfo.hobby" value="eat">
+            睡觉<input type="checkbox" v-model="userInfo.hobby" value="sleep">
+            玩游戏<input type="checkbox" v-model="userInfo.hobby" value="game"><br><br>
+            意向城市
+            <!-- 因为选择城市只选择一个，所以Vue里设置层字符串即可 -->
+            <select v-model="userInfo.city">
+                <option value="">请选择城市</option>
+                <option value="beijing">北京</option>
+                <option value="shenzhen">深圳</option>
+                <option value="guangzhou">广州</option>
+                <option value="xi'an">西安</option>
+            </select><br><br>
+            其他信息:<br/><br/>
+            <!-- 给可以输入大篇幅文字的模板添加v-model.lazy，使其懒加载，等输入在这里的数据输入完后，Vue再收集，页面中看的话，textarea失去焦点后，就收集 -->
+            <textarea v-model.lazy="userInfo.others"></textarea><br><br>
+            <input type="checkbox" v-model="userInfo.agree">阅读并接受<a href="https://www.zhipin.com/">用户协议</a><br><br>
+            <button >提交</button>
+        </form>
+
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            userInfo:{
+                account:'',
+                password:'',
+                age:'',
+                gender:'女',
+                hobby:[],
+                city:'',
+                others:'',
+                agree:''
+            }
+        },
+        methods:{
+            demo(){
+                // console.log(this._data);  //Vue
+                // console.log(JSON.stringify(this._data));
+                console.log(JSON.stringify(this.userInfo));
+            }
+        }
+    })
+</script>
+</html>
