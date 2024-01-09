@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>过滤器</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+    <script type="text/javascript" src="../js/dayjs.min.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <h2>显示格式化后的事件</h2>
+        <!-- 计算属性实现 -->
+        <h3>现在是：{{formatTime}}</h3>
+        <!-- methods实现 -->
+        <h3>现在是：{{getFormatTime()}}</h3>
+        <!-- 过滤器实现 -->
+        <h3>现在是：{{time | timeFormatter}}</h3>
+        <!-- 过滤器的传参 -->
+        <h3>现在是：{{time | timeFormatter('YYYY.MM.DD')}}</h3>
+        <!-- 多个过滤器串联，在此time不是直接作为mySlice的参数直接处理，会一层一层的传递并处理，先传给timeFormatter，传给mySlice的参数，完全靠timeFormatter函数的返回值 -->
+        <h3>现在是：{{time | timeFormatter('YYYY') | mySlice}}</h3>
+    </div>
+
+    <!-- 容器2 -->
+    <div id="root2">
+        <h2>{{msg | mySlice}}</h2>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+    // 配置全局过滤器，全局过滤器必须在实例化Vue之前就要配置好
+    Vue.filter('mySlice',function (value) {
+        return value.slice(3,9)
+    })
+
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            time:1704593467805  //时间戳
+        },
+        computed:{
+            formatTime(){
+                // dayjs里要是不传递参数，就会把运行此行代码的时间戳计算出来，穿了参数就是计算指定的时间戳
+                // return dayjs(this.time).format('YYYY-MM-DD HH:mm:ss')
+                return dayjs().format('YYYY-MM-DD HH:mm:ss')
+            }
+        },
+        methods:{
+            getFormatTime(value){
+                return dayjs(this.time).format('YYYY-MM-DD HH:mm:ss')
+                // return dayjs().format('YYYY-MM-DD HH:mm:ss')
+            }
+        },
+        // 过滤器属性，本质是一个函数，所以filters内写函数，函数内是对数据按照某种形式进行加工处理
+        // 局部过滤器
+        filters:{
+            // str='YYYY-MM-DD HH:mm:ss'的意思是，若str没有值，就用赋值给str的这个，若有值，就不用这个
+            timeFormatter(value,str='YYYY-MM-DD HH:mm:ss'){
+                // return dayjs(this.time).format('YYYY-MM-DD HH:mm:ss')
+                // console.log('time:',value);  //time: 1704593467805
+                // return dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+                return dayjs(value).format(str)
+            },
+            // 配置全局过滤器后，局部的过滤器就可以省略
+            // mySlice(value){
+            //     return value.slice(0,4)
+            // }
+        }
+    })
+
+    const vm2=new Vue({
+        el:'#root2',
+        data:{
+            msg:'你好，于适，谷江山'
+        },
+        filters:{
+            myStar(value){
+                return value.slice(3,9)
+            }
+        }
+    })
+</script>
+</html>

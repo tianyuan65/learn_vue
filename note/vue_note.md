@@ -1038,6 +1038,91 @@
             * ![控制台输出输入的和选择的信息，可以看到都是响应式数据](images/控制台输出已选信息.png)
             * ![将输入和选择的信息，转为json形式输出](images/控制台输出转成json的信息.png)
             * ![把数据放在配置的userInfo属性内，方便读取](images/配置userInfo属性，将数据属性们放在userInfo里，这样方便使用.png)
+    * 1.13 过滤器
+        * 定义：对要显示的数据进行特定格式化后再显示(适用于一些简单逻辑的处理，过于复杂的用computed或methods实现)
+        * 语法：
+            * 1. 注册过滤器：全局-Vue.filter(name,callback) 或 局部-new Vue(filters:{})
+            * 2. 使用过滤器：{{xxx | 过滤器名}} 或 v-bind:属性="xxx | 过滤器名"
+        * 备注：
+            * 1. 过滤器也可以接收额外参数、多个过滤器也可以串联
+            * 2. 并没有改变原本的数据，是产生新的对应的数据
+        * ![6种方法实现时间戳计算](images/6种方法实现，依次为computed，methods，filter，filter传参，多个过滤器传参，全局过滤器.png)
+        * ![未配置全局过滤器前，不同Vue的局部过滤器之间互相通用的结果](images/未配置全局过滤器之前，局部过滤器之间不可通用.png)
+        * ```
+            <!-- 容器 -->
+            <div id="root">
+                <h2>显示格式化后的事件</h2>
+                <!-- 计算属性实现 -->
+                <h3>现在是：{{formatTime}}</h3>
+                <!-- methods实现 -->
+                <h3>现在是：{{getFormatTime()}}</h3>
+                <!-- 过滤器实现 -->
+                <h3>现在是：{{time | timeFormatter}}</h3>
+                <!-- 过滤器的传参 -->
+                <h3>现在是：{{time | timeFormatter('YYYY.MM.DD')}}</h3>
+                <!-- 多个过滤器串联，在此time不是直接作为mySlice的参数直接处理，会一层一层的传递并处理，先传给timeFormatter，传给mySlice的参数，完全靠timeFormatter函数的返回值 -->
+                <h3>现在是：{{time | timeFormatter('YYYY') | mySlice}}</h3>
+            </div>
+
+            <!-- 容器2 -->
+            <div id="root2">
+                <h2>{{msg | mySlice}}</h2>
+            </div>
+            <script type="text/javascript">
+                Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+                // 配置全局过滤器，全局过滤器必须在实例化Vue之前就要配置好
+                Vue.filter('mySlice',function (value) {
+                    return value.slice(3,9)
+                })
+
+                const vm=new Vue({
+                    el:'#root',
+                    data:{
+                        time:1704593467805  //时间戳
+                    },
+                    computed:{
+                        formatTime(){
+                            // dayjs里要是不传递参数，就会把运行此行代码的时间戳计算出来，穿了参数就是计算指定的时间戳
+                            // return dayjs(this.time).format('YYYY-MM-DD HH:mm:ss')
+                            return dayjs().format('YYYY-MM-DD HH:mm:ss')
+                        }
+                    },
+                    methods:{
+                        getFormatTime(value){
+                            return dayjs(this.time).format('YYYY-MM-DD HH:mm:ss')
+                            // return dayjs().format('YYYY-MM-DD HH:mm:ss')
+                        }
+                    },
+                    // 过滤器属性，本质是一个函数，所以filters内写函数，函数内是对数据按照某种形式进行加工处理
+                    // 局部过滤器
+                    filters:{
+                        // str='YYYY-MM-DD HH:mm:ss'的意思是，若str没有值，就用赋值给str的这个，若有值，就不用这个
+                        timeFormatter(value,str='YYYY-MM-DD HH:mm:ss'){
+                            // return dayjs(this.time).format('YYYY-MM-DD HH:mm:ss')
+                            // console.log('time:',value);  //time: 1704593467805
+                            // return dayjs(value).format('YYYY-MM-DD HH:mm:ss')
+                            return dayjs(value).format(str)
+                        },
+                        // 配置全局过滤器后，局部的过滤器就可以省略
+                        // mySlice(value){
+                        //     return value.slice(0,4)
+                        // }
+                    }
+                })
+
+                const vm2=new Vue({
+                    el:'#root2',
+                    data:{
+                        msg:'你好，于适，谷江山'
+                    },
+                    filters:{
+                        myStar(value){
+                            return value.slice(3,9)
+                        }
+                    }
+                })
+            </script>
+          ```
 
 
 * **第二章 Vue组件化编程**
@@ -1061,5 +1146,7 @@
     * 虚拟DOM一致，则真实DOM复用
     * 在_data里的数据，如果没有自己专属的get、set函数，它就不是一个响应式的数据，也就是既无法获取，也无法修改，简而言之，必须要在data对象里的属性才能被监听对象数据劫持，然后才能设置set方法来渲染界面。数据劫持就是数据已经交给vue来管了，操纵数据必须通过vue提供的方法来实现。数据劫持描述的是过程，数据代理针对的是某个数据。
     * input元素类型teype等于number的时候代表这个表单框只能输入数字，不能输入字母 ，但是要注意最终接受到的还是字符串，所以需要v-model.number，才能保证接收到的是数值
+    * 首先，捕获到```{{time | timeFormatter}}```，其次，读取time，随后将time作为参数传给timeFormatter函数，再次，在Vue中调用timeFormatter，Vue就可以获取到timeFormatter函数返回的值，最后，用拿到的值，将模板内的内容替换掉，也就是把用过滤器算好的时间放到模板上渲染展示
+    * 过滤器接收的第一个参数，就是过滤器管道符前面的数据，用timeFormatter举例的话，time就是第一个参数，想要另外添加其他的参数，就在vm下filters里的函数里添加即可。
     
     
