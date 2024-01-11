@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-pre指令</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 无动态指令 -->
+        <h2 v-pre>老师说Vue很简单，但我不信</h2>
+        <!-- 有动态指令 -->
+        <h2>当前的n值是:{{n}}</h2>
+        <button @click="n++">click to n+1</button>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    new Vue({
+        el:'#root',
+        data:{
+            n:1
+        }
+    })
+</script>
+</html>
