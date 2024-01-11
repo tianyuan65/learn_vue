@@ -1154,6 +1154,25 @@
             * 3. v-cloak(没有值)：放置闪现，与参数是配合:[v-cloak]{display:none}
                 * (1). 本质是一个特殊属性，Vue实例创建完毕并接管容器后，会删掉v-cloak属性。
                 * (2). 使用css配合v-cloak可以解决网速慢时页面展示出{{xxx}}，这种让用户疑惑的问题，从而实现懒加载。
+            * 4. v-once指令：
+                * (1). v-once所在的节点在初次动态渲染后，就视为静态内容了
+                * (2). 以后数据的改变不会引起v-once所在结构的更新，可以用于优化性能
+                    * ```
+                        <!-- 容器 -->
+                        <div id="root">
+                            <!-- 与v-cloak类似，v-once没有值，只有属性名，作用是展示数据的初始值 -->
+                            <h2 v-once>初始化的n值是:{{n}}</h2>
+                            <h2>当前的n值是:{{n}}</h2>
+                            <button @click="n++">click to n+1</button>
+                        </div>
+                        new Vue({
+                            el:'#root',
+                            data:{
+                                n:1
+                            }
+                        })
+                      ```
+                    * ![v-once指令展示](images/v-once指令.png)
 
 
 * **第二章 Vue组件化编程**

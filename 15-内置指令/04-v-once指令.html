@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-once指令</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 与v-cloak类似，v-once没有值，只有属性名，作用是展示数据的初始值 -->
+        <h2 v-once>初始化的n值是:{{n}}</h2>
+        <h2>当前的n值是:{{n}}</h2>
+        <button @click="n++">click to n+1</button>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    new Vue({
+        el:'#root',
+        data:{
+            n:1
+        }
+    })
+</script>
+</html>
