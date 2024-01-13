@@ -1194,7 +1194,7 @@
                     * ![乱用v-pre结果](images/给模板上所有标签体加了v-pre后.png)
         * 1.14.2 自定义指令
             * 1. 注册全局指令。需求：定义一个v-big指令，和v-text功能类似，但会把绑定的数值放大10倍，用函数式实现
-                * 自定义指令配置在Vue实例的directives属性对象里，directives里可以配置函数式指令，也可以配置对象式指令，各有优缺点，函数式指令的话书写起来方便，但很难处理一些细节上的问题，对象式相较于函数式会麻烦一些，但可以用其实现更复杂、细节的问题
+                * 自定义指令配置在Vue实例的directives属性对象里，directives里可以配置函数式指令，也可以配置对象式指令，各有优缺点，函数式指令的话书写起来方便，但很难处理一些细节上的问题，对象式相较于函数式会麻烦一些，但可以用其实现更复杂、细节的问题。
                 * ```
                     <div id="root">
                         <!-- 插值语法 -->
@@ -1218,6 +1218,62 @@
                   ```
                 * ![上面代码效果图，就是点击button，绑定了v-big的标签题内容比v-text大10倍](images/修改元素里的文本内容，也就是需求里的点击按钮接了v-big的大10倍.png)
                 * ![打印给directives对象里big函数传递的参数，尤其是第二个参数的属性内容](images/打印自定义指令v-big中第二个参数对象里的内容.png)
+            * 2. 注册局部指令。需求2：定义一个v-fbind指令，和v-bind功能类似，但可以让其所绑定的input元素默认获取焦点，过于复杂，用对象式实现
+                * 自定义指令配置在Vue实例的directives属性对象里，directives里不但可以配置函数式，还可以配置对象式，用于处理一些更加复杂的细节，相较于函数式会麻烦。Vue不仅把fbind指令和input元素绑定成功了，还把元素渲染到页面上之后，再让input元素获取焦点。这个操作通过函数式是无法实现的，所以需要把fbind写成对象式，fbind对象里会有三个函数，bind、inserted、update，且这三个函数也会接受element和binding这两个参数。参照上面的函数式的代码，可以得见，函数式写法就相当于只用了对象式里bind函数和update函数，没有用inserted函数，所以若有特殊的需求，比如，获取父元素，获取焦点等，就需要inserted函数，此时就用对象式来完成。
+                * ```
+                    <!-- 容器 -->
+                    <div id="root">
+                        <!-- 插值语法 -->
+                        <div>{{n}}</div>
+                        <!-- 自定义指令 -->
+                        <h2>当前的n值是:<span v-text="n"></span></h2>
+                        <h2>放大10倍的n值是:<span v-big="n"></span></h2>
+                        <button @click="n++">click to n+1</button>
+                        <hr>
+                        <!-- v-bind -->
+                        <input type="text" v-bind:value="n"><br><br>
+                        <!-- 自定义指令：v-fbind -->
+                        <input type="text" v-fbind:value="n">
+                    </div>
+                    // directives属性对象里，配置自定义的指令
+                    directives:{
+                        // 在该指令里配置多个k:v，虽然麻烦，但是因为是自定义的，所以可以处理更多的细节问题
+                        // big也可以写成函数形式，虽然方便，但无法处理很多细节问题。会传两个参数，元素类型(element)和绑定对象，就是元素和指令之间的关联关系(binding)
+                        // big函数何时会被调用？1. 指令与元素成功绑定时(就是一上来)；2. 指令所在的模板被重新解析时
+                        big(element,binding){
+                            // 修改元素里的文本内容
+                            element.innerText=binding.value*10
+                            // console.log(element,binding);
+                        },
+                        // 叫fbind的原因是，让其绑定的input元素默认获取焦点，focus-bind，所以叫fbind
+                        // fbind写成对象形式，并且在fbind里可以创建多个函数，Vue会在特殊的时刻，调用对应的、特殊的函数
+                        fbind:{
+                            // 何时调用该函数？ 指令与元素成功绑定时(就是一上来)
+                            bind(element,binding){
+                                element.value=binding.value
+                                console.log('bind');
+                            },
+                            // 何时调用该函数？ 指令所在元素被插入页面时
+                            inserted(element,binding){
+                                // 指令元素被插入页面时，input获取焦点
+                                element.focus()
+                                console.log('inserted');
+                            },
+                            // 何时调用该函数？ 指令所在的模板被重新解析时
+                            update(element,binding){
+                                // 这个函数里不能空着，记得把要更新的数据写上去
+                                element.value=binding.value
+                                // 想要数据更新后不失去焦点就加这一步骤，但是这很诡异
+                                // element.focus()
+                                console.log('updated');
+                            }
+                        }
+                    }
+                  ```
+                * ![fbind的两个参数的元素类型和对象内容](images/fbind参数的元素类型和绑定对象的内容.png)
+                * ![fbind对象里的三个函数何时调用](images/对象式时三个函数(bind、inserted、update)何时调用.png)
+                * ![刷新页面，刚获取焦点](images/获取了焦点.png)
+                * ![成功效果图，点击button，数据更新，update函数被调用](images/点击按钮，数据更新，调用update函数，但input失去焦点.png)
 
 
 * **第二章 Vue组件化编程**
@@ -1244,5 +1300,6 @@
     * cookle存在浏览器中。session存在服务器
     * 同源策略：域名、协议、端口相同则是同源
     * once是响应，是事件符；v-once是渲染
+    * element.focus()，点击button后就获取了焦点，但初次进入页面时没有，原因是因为再次点击时，依赖数据发生变化，模板再次解析，就会触发写的焦点，vue解析的时候fbind已经执行数据可以绑定但是真实dom还没有渲染到页面也就是focus执行了也找不到
     
     
