@@ -1192,6 +1192,32 @@
                         })
                       ```
                     * ![乱用v-pre结果](images/给模板上所有标签体加了v-pre后.png)
+        * 1.14.2 自定义指令
+            * 1. 注册全局指令。需求：定义一个v-big指令，和v-text功能类似，但会把绑定的数值放大10倍，用函数式实现
+                * 自定义指令配置在Vue实例的directives属性对象里，directives里可以配置函数式指令，也可以配置对象式指令，各有优缺点，函数式指令的话书写起来方便，但很难处理一些细节上的问题，对象式相较于函数式会麻烦一些，但可以用其实现更复杂、细节的问题
+                * ```
+                    <div id="root">
+                        <!-- 插值语法 -->
+                        <div>{{n}}</div>
+                        <!-- 自定义指令 -->
+                        <h2>当前的n值是:<span v-text="n"></span></h2>
+                        <h2>放大10倍的n值是:<span v-big="n"></span></h2>
+                        <button @click="n++">click to n+1</button>
+                    </div>
+                    // directives属性对象里，配置自定义的指令
+                    directives:{
+                        // 在该指令里配置多个k:v，虽然麻烦，但是因为是自定义的，所以可以处理更多的细节问题
+                        // big也可以写成函数形式，虽然方便，但无法处理很多细节问题。会传两个参数，元素类型(element)和绑定对象，就是元素和指令之间的关联关系(binding)
+                        // big函数何时会被调用？1. 指令与元素成功绑定时；2. 指令所在的模板被重新解析时
+                        big(element,binding){
+                            // 修改元素里的文本内容
+                            element.innerText=binding.value*10
+                            console.log(element,binding);
+                        }
+                    }
+                  ```
+                * ![上面代码效果图，就是点击button，绑定了v-big的标签题内容比v-text大10倍](images/修改元素里的文本内容，也就是需求里的点击按钮接了v-big的大10倍.png)
+                * ![打印给directives对象里big函数传递的参数，尤其是第二个参数的属性内容](images/打印自定义指令v-big中第二个参数对象里的内容.png)
 
 
 * **第二章 Vue组件化编程**
