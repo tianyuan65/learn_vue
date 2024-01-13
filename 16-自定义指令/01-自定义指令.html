@@ -17,6 +17,7 @@
         <div>{{n}}</div>
         <!-- 自定义指令 -->
         <h2>当前的n值是:<span v-text="n"></span></h2>
+        <!-- <h2>放大10倍的n值是:<span v-big-number="n"></span></h2> -->
         <h2>放大10倍的n值是:<span v-big="n"></span></h2>
         <button @click="n++">click to n+1</button>
         <hr>
@@ -25,9 +26,37 @@
         <!-- 自定义指令：v-fbind -->
         <input type="text" v-fbind:value="n">
     </div>
+    <!-- 容器2 -->
+    <div id="root2">
+        <input type="text" v-fbind:value="x"><br><br>
+        <button @click="x++"></button>
+    </div>
 </body>
 <script type="text/javascript">
     Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+    // 配置全局指令，和全局过滤一样，全局指令必须在实例化Vue之前就要配置好
+    Vue.directive('fbind',{
+        // 何时调用该函数？ 指令与元素成功绑定时(就是一上来)
+        bind(element,binding){
+            console.log('fbind-bind',this);  //Window  注意：此处的this是window，因为我们操作了DOM，只有Window才能操作DOM
+            element.value=binding.value
+            console.log('bind');
+        },
+        // 何时调用该函数？ 指令所在元素被插入页面时
+        inserted(element,binding){
+            // 指令元素被插入页面时，input获取焦点
+            element.focus()
+            console.log('inserted');
+        },
+        // 何时调用该函数？ 指令所在的模板被重新解析时
+        update(element,binding){
+            // 这个函数里不能空着，记得把要更新的数据写上去
+            element.value=binding.value
+            // 想要数据更新后不失去焦点就加这一步骤，但是这很诡异
+            // element.focus()
+            console.log('updated');
+        }
+    })
 
     new Vue({
         el:'#root',
@@ -39,6 +68,11 @@
             // 在该指令里配置多个k:v，虽然麻烦，但是因为是自定义的，所以可以处理更多的细节问题
             // big也可以写成函数形式，虽然方便，但无法处理很多细节问题。会传两个参数，元素类型(element)和绑定对象，就是元素和指令之间的关联关系(binding)
             // big函数何时会被调用？1. 指令与元素成功绑定时(就是一上来)；2. 指令所在的模板被重新解析时
+            // 'big-number'(element,binding){
+            //     // 修改元素里的文本内容
+            //     element.innerText=binding.value*10
+            //     // console.log(element,binding);
+            // },
             big(element,binding){
                 // 修改元素里的文本内容
                 element.innerText=binding.value*10
@@ -46,28 +80,36 @@
             },
             // 叫fbind的原因是，让其绑定的input元素默认获取焦点，focus-bind，所以叫fbind
             // fbind写成对象形式，并且在fbind里可以创建多个函数，Vue会在特殊的时刻，调用对应的、特殊的函数
-            fbind:{
+            // fbind:{
                 // 何时调用该函数？ 指令与元素成功绑定时(就是一上来)
-                bind(element,binding){
-                    element.value=binding.value
-                    console.log('bind');
-                },
-                // 何时调用该函数？ 指令所在元素被插入页面时
-                inserted(element,binding){
-                    // 指令元素被插入页面时，input获取焦点
-                    element.focus()
-                    console.log('inserted');
-                },
-                // 何时调用该函数？ 指令所在的模板被重新解析时
-                update(element,binding){
-                    // 这个函数里不能空着，记得把要更新的数据写上去
-                    element.value=binding.value
-                    // 想要数据更新后不失去焦点就加这一步骤，但是这很诡异
-                    // element.focus()
-                    console.log('updated');
-                }
-            }
+                // bind(element,binding){
+                //     console.log('fbind-bind',this);  //Window  注意：此处的this是window，因为我们操作了DOM，只有Window才能操作DOM
+                //     element.value=binding.value
+                //     console.log('bind');
+                // },
+                // // 何时调用该函数？ 指令所在元素被插入页面时
+                // inserted(element,binding){
+                //     // 指令元素被插入页面时，input获取焦点
+                //     element.focus()
+                //     console.log('inserted');
+                // },
+                // // 何时调用该函数？ 指令所在的模板被重新解析时
+                // update(element,binding){
+                //     // 这个函数里不能空着，记得把要更新的数据写上去
+                //     element.value=binding.value
+                //     // 想要数据更新后不失去焦点就加这一步骤，但是这很诡异
+                //     // element.focus()
+                //     console.log('updated');
+                // }
+            // }
          }
+    })
+
+    new Vue({
+        el:'#root2',
+        data:{
+            x:1
+        }
     })
 </script>
 </html>
