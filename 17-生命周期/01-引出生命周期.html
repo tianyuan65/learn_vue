@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01-引出生命周期</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 第一个opacity代表css属性，第二个opacity代表Vue实例中_data里的数据名，可以简写为{{opacity}} -->
+        <h2 :style="{opacity: opacity}">我学习Vue的激情</h2>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    new Vue({
+        el:'#root',
+        data:{
+            opacity: 1
+        },
+        methods:{},
+        // Vue完成模板的解析，并把初始的真实的DOM元素放到页面后(挂载完毕)，调用mounted函数
+        mounted(){
+            console.log('mounted function excuted',this);  //mounted function excuted,Vue
+            setInterval(() => {
+                this.opacity-=0.01
+                if(this.opacity<=0) this.opacity=1
+            }, 16);
+        }
+    })
+
+    // 通过外部的定时器实现(不推荐，尽量写在实例化Vue的里面)
+    // setInterval(() => {
+    //     vm.opacity-=0.01
+    //     if(vm.opacity<=0) vm.opacity=1
+    // }, 16);
+</script>
+</html>
