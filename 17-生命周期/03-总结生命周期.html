@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01-引出生命周期</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 第一个opacity代表css属性，第二个opacity代表Vue实例中_data里的数据名，可以简写为{{opacity}} -->
+        <h2 :style="{opacity: opacity}">我学习Vue的激情</h2>
+        <button @click="stop">click to stop changing opacity</button>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    new Vue({
+        el:'#root',
+        data:{
+            opacity: 1
+        },
+        methods:{
+            stop(){
+                console.log(this.opacity);
+                // 温柔地停下定时器
+                // clearInterval(this.timer)
+                // 暴力停止定时器，就是直接连vm也准备销毁，但定时器还在傻了吧唧的跑
+                this.$destroy()
+            }
+        },
+        // Vue完成模板的解析，并把初始的真实的DOM元素放到页面后(挂载完毕)，调用mounted函数
+        mounted(){
+            console.log('mounted function excuted',this);  //mounted function excuted,Vue
+            this.timer=setInterval(() => {
+                this.opacity-=0.01
+                if(this.opacity<=0) this.opacity=1
+            }, 16);
+        },
+        // 张三留下遗嘱的操作，就是得知即将被销毁，在该钩子里进行销毁前的准备，交代后事后进行善后工作等
+        beforeDestroy() {
+            // 销毁Vue实例前，在这里清除定时器
+            console.log('vm:没事，我去嘎了');
+            clearInterval(this.timer)
+        },
+    })
+</script>
+</html>

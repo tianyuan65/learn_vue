@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析生命周期</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <h2 v-text="n"></h2>
+        <h2>当前的n值是:{{n}}</h2>
+        <button @click="add">click to n+1</button>
+        <button @click="gun">click to destroy vm</button>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    new Vue({
+        el:'#root',
+        // 若想要用template属性，就可以不在模板上写内容，但是要一行写下来，反正我是忍不下来，且它里面的对象会把整个div容器替换掉，无论原先div里写了什么属性都没了
+        // template:`<div><h2>当前的n值是:{{n}}</h2><button @click="add">click to n+1</button></div>`,
+        data:{
+            n:1
+        },
+        methods:{
+            add(){
+                console.log('add');
+                this.n++
+            },
+            gun(){
+                console.log('嗯,我滚了');
+                this.$destroy()
+            }
+        },
+        watch:{
+            n(){
+                console.log('n changed');
+            }
+        },
+        beforeCreate() {
+            console.log('beforeCreate');  //beforeCreate
+            // console.log(this);  //Vue，但是此时这里面没有data，就是还没开始数据代理
+            // 卡一个断点，用于调试，目前只分析beforeCreate钩子，不能唰一下把所有流程都走完
+            // debugger;
+        },
+        created() {
+            console.log('created');  //created
+            // console.log(this);  //此时可以访问到data中数据和methods中的函数了，可以进行数据监测和数据代理了
+            // debugger;
+        },
+        beforeMount() {
+            console.log('beforeMount');  //beforeMount
+            // console.log(this);  //此时Vue开始解析模板，但也只是生成了VDOM，并未将解析的内容展示在页面上，展示的也只是未经Vue编译的DOM，也就是模板里我手动写了啥，页面就展示啥
+            // debugger
+        },
+        mounted() {
+            console.log('mounted');  //mounted
+            // console.log(this);  //此时页面中呈现的是经过Vue编译的DOM，可以在此进行各种操作，比如发送网络请求，设置定时器，绑定自定义事件等，初始化操作，至此初始化过程结束
+            // debugger;
+            // console.log(this.$el，this.$el instanceof HTMLElement);  //容器里的内容，包括容器 true
+        },
+        beforeUpdate() {
+            console.log('beforeUpdate');  //beforeUpdate
+            // console.log(this.n);  //此时数据已更新，但未展示到页面上，页面尚未与数据保持同步
+            // debugger
+        },
+        updated() {
+            console.log('updated');  //updated
+            // console.log(this.n);  //此时数据是新的，页面也是新的，页面与数据同步
+            // debugger
+        },
+        beforeDestroy() {
+            console.log('beforeDestroy');  //beforeDestroy
+            // console.log(this.n);  //此时Vue实例中的data、methods、指令等，处于可用状态，马上要执行销毁程序，在此阶段会进行关闭定时器、取消订阅、解绑自定义事件等收尾操作，属于是回光返照
+            // debugger
+        },
+        destroyed() {
+            console.log('destroyed');  //destroyed
+            console.log(this.n);
+        },
+    })
+</script>
+</html>
