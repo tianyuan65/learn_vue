@@ -1401,6 +1401,108 @@
         * 2.1.4 组件化
             * 当应用中的功能都是多组件的方式来编写的，那这个应用就是一个组件化的应用。
     * 2.2 非单文件组件
+        * Vue中使用组件的三大步骤：
+            * 定义组件(创建组件)
+            * 注册组件
+            * 使用组件(写组件标签)
+        * 1. 如何定义/创建组件？
+            * 使用Vue.extend(options)创建，其中options和new Vue(options)时传入的那个options几乎一样，但区别如下：
+                * (1). el不能写，原因：最终所有的组件都要经过Vue实例管理，由Vue实例的el决定服务于哪个容器
+                * (2). data必须写成函数，原因：避免组件被复用时，数据存在引用关系
+            * 备注：使用template配置项，可以配置组件结构写成模板字符串
+        * 2. 如何注册组件？
+            * (1). 局部注册：靠new Vue的时候传入components配置项，往components里写组件名
+            * (2). 全局注册：靠Vue.component('组件名',组件)，要在创建Vue实例前就要注册好，要不然报错并没法用
+                * ```
+                    <!-- 容器 -->
+                    <div id="root">
+                        <!-- 三、编写组件标签 -->
+                        <firm></firm>
+                        <hr>
+                        <hello></hello>
+                        <!-- 三、编写组件标签 -->
+                        <staff></staff>
+                    </div>
+                    <!-- 容器2 -->
+                    <div id="root2">
+                        <hello></hello>
+                    </div>
+                    // 二、全局注册组件，参数1：组件名，参数2：组件，就是上面创建组件时起的名
+                    Vue.component('hello',hello)
+                    new Vue({
+                        el:'#root2',
+                    })
+                  ```
+                * ![全局注册和局部注册的组件](images/全局注册的组件和局部注册的组件.png)
+        * 3. 编写组件标签
+            * <firm></firm>
+        * 代码及效果图：
+            * ```
+                <!-- 容器 -->
+                <div id="root">
+                    <!-- 三、编写组件标签 -->
+                    <firm></firm>
+                    <hr>
+                    <!-- 三、编写组件标签 -->
+                    <staff></staff>
+                </div>
+                // 一、创建firm组件
+                const firm=Vue.extend({
+                    template:`
+                        <div>
+                            <h2>公司名称：{{firmName}}</h2>
+                            <h2>公司地址：{{address}}</h2>
+                            <button @click="showName">click to show firmName</button>
+                        </div>
+                    `,
+                    // el:'#root',  //组件定义时，一定不要写el配置项，因为最终所有的组件都要被一个Vue实例管理，由Vue实例决定服务于哪个容器
+                    // 函数有单独作用域，所以data用函数形式
+                    data(){
+                        return {
+                            firmName:'729声工场',
+                            address:'北京市朝阳区'
+                        }
+                    },
+                    methods:{
+                        showName(){
+                            alert(this.firmName)
+                        }
+                    }
+                })
+                // 一、创建staff组件
+                const staff=Vue.extend({
+                    template:`
+                        <div>
+                            <h2>员工姓名：{{staffName}}</h2>
+                            <h2>员工年龄：{{age}}</h2>
+                        </div>
+                    `,
+                    // el:'#root',  //组件定义时，一定不要写el配置项，因为最终所有的组件都要被一个Vue实例管理，由Vue实例决定服务于哪个容器
+                    data(){
+                        return{
+                            staffName:'谷江山',
+                            age:29
+                        }
+                    }
+                })
+                // 创建Vue实例
+                new Vue({
+                    el:'#root',
+                    // 二、全新的配置项components，里面是一组一组的key：value组合，在此注册组件(局部注册)
+                    components:{
+                        // 正经组件名：组件中转的那个变量，就是上面创建组件时起的名
+                        // firm:firm
+                        // 简写
+                        firm,
+                        // 原理同firm
+                        staff
+                    }
+                })
+              ```
+            * ![创建、注册组件，编写组件标签](images/创建、注册组件，编写组件标签效果图.png)
+            * ![添加点击事件并绑定回调函数](images/也可以添加回调函数.png)
+    * 2.3 单文件组件
+        * 
 
 
 * **第三章 使用Vue脚手架**

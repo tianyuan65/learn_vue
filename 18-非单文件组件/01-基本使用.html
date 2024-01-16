@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01-基本使用</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 三、编写组件标签 -->
+        <firm></firm>
+        <hr>
+        <hello></hello>
+        <!-- 三、编写组件标签 -->
+        <staff></staff>
+    </div>
+
+    <!-- 容器2 -->
+    <div id="root2">
+        <hello></hello>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    // 一、创建firm组件，调用extend api需要为其传入一个配置对象，该配置对象内可以配置很多内容，都是用于控制firm组件相关内容的
+    const firm=Vue.extend({
+        template:`
+            <div>
+                <h2>公司名称：{{firmName}}</h2>
+                <h2>公司地址：{{address}}</h2>
+                <button @click="showName">click to show firmName</button>
+            </div>
+        `,
+        // el:'#root',  //组件定义时，一定不要写el配置项，因为最终所有的组件都要被一个Vue实例管理，由Vue实例决定服务于哪个容器
+        // 函数有单独作用域，所以data用函数形式
+        data(){
+            return {
+                firmName:'729声工场',
+                address:'北京市朝阳区'
+            }
+        },
+        methods:{
+            showName(){
+                alert(this.firmName)
+            }
+        }
+    })
+
+    // 一、创建staff组件
+    const staff=Vue.extend({
+        template:`
+            <div>
+                <h2>员工姓名：{{staffName}}</h2>
+                <h2>员工年龄：{{age}}</h2>
+            </div>
+        `,
+        // el:'#root',  //组件定义时，一定不要写el配置项，因为最终所有的组件都要被一个Vue实例管理，由Vue实例决定服务于哪个容器
+        data(){
+            return{
+                staffName:'谷江山',
+                age:29
+            }
+        }
+    })
+
+    // 一、创建hello组件
+    const hello=Vue.extend({
+        template:`
+            <div>
+                <h2>{{name}}</h2>
+            </div>
+        `,
+        data(){
+            return{
+                name:'Tom'
+            }
+        }
+    })
+
+    // 二、全局注册组件，参数1：组件名，参数2：组件中转的那个变量，就是上面创建组件时起的名
+    Vue.component('hello',hello)
+
+    // 创建Vue实例
+    new Vue({
+        el:'#root',
+        // 二、全新的配置项components，里面是一组一组的key：value组合，在此注册组件(局部注册)
+        components:{
+            // 正经组件名：组件中转的那个变量，就是上面创建组件时起的名
+            // firm:firm
+            // 简写
+            firm,
+            // 原理同firm
+            staff
+        }
+    })
+
+    new Vue({
+        el:'#root2',
+    })
+</script>
+</html>
