@@ -1503,6 +1503,43 @@
             * ![添加点击事件并绑定回调函数](images/也可以添加回调函数.png)
     * 2.3 单文件组件
         * 
+    * 几个注意点：
+        * 1. 关于组件名
+            * 一个单词组成：
+                * 全部字母小写:firm
+                    * ![全小写](images/多个单词组成的组件名的几个写法之全小写.png)
+                * 首字母大写:Firm
+            * 多个单词组成：
+                * kebab-case命名:firm-name
+                    * ![kebab-case写法](images/多个单词组成的组件名的几个写法之单词之间加个横杠.png)
+                * CamelCase命名:FirmName(但该方法需要在Vue脚手架环境下使用)
+            * 备注：
+                * (1). 组件名尽可能回避HTML中已有的元素名称，比如：h2、H2都不行，但可以钻空子，H2o就可以
+                * (2). 可以使用name配置项指定组件在开发者工具中呈现的名字
+                    * ![在name配置项指定组件名，Vue会优先访问](images/可以在name配置项中指定开发者工具中呈现的组件名.png)
+        * 2. 关于组件标签：
+            * 写法1：<firm></firm>
+            * 写法2：<firm/>
+            * 备注：不使用脚手架时，<firm/>会导致后续组件不能渲染
+        * 3. 一个简写方法：
+            * ```const firm=Vue.extends(options)```可简写为```const firm=options```
+                * ```
+                    // 创建/定义组件方法2--简写版
+                    const firm={
+                        template:`
+                            <div>
+                                <h2>公司名称：{{firmName}}</h2>
+                                <h2>公司地址：{{address}}</h2>
+                            </div>
+                        `,
+                        data(){
+                            return {
+                                firmName:'729声工场',
+                                address:'北京市朝阳区'
+                            }
+                        }
+                    }
+                  ```
 
 
 * **第三章 使用Vue脚手架**

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>几个注意点</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <h1>{{msg}}</h1>
+        <Firm></Firm>
+        <!-- 写入多个自闭和组件时，后面的组件无法在页面渲染展示 -->
+        <!-- <Firm/> -->
+        <!-- <firmname></firmname> -->
+        <!-- <firm-name></firm-name> -->
+        <!-- <H2o></H2o> -->
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    // 创建/定义组件方法1--完整版
+    const firm=Vue.extend({
+        // Vue开发者工具会优先看name配置项中有无指定的组件名，若有就用name配置项指定的；若无就用Vue实例中components里注册的组件名
+        // name:'changzi',
+        template:`
+            <div>
+                <h2>公司名称：{{firmName}}</h2>
+                <h2>公司地址：{{address}}</h2>
+            </div>
+        `,
+        data(){
+            return {
+                firmName:'729声工场',
+                address:'北京市朝阳区'
+            }
+        }
+    })
+
+    // 创建/定义组件方法2--简写版
+    // const firm={
+    //     // name:'changzi',
+    //     template:`
+    //         <div>
+    //             <h2>公司名称：{{firmName}}</h2>
+    //             <h2>公司地址：{{address}}</h2>
+    //         </div>
+    //     `,
+    //     data(){
+    //         return {
+    //             firmName:'729声工场',
+    //             address:'北京市朝阳区'
+    //         }
+    //     }
+    // }
+
+    new Vue({
+        el:'#root',
+        data:{
+            msg:'欢迎学习Vue！！'
+        },
+        components:{
+            // 注册组件
+            Firm:firm
+            // firmname:firm
+            // 'firm-name':firm
+            // 每一个单词的首字母都大写的方法，需要在脚手架环境下使用，目前不在脚手架环境
+            // FirmName:firm
+            // 不能将html原生的标签名作为组件名来使用，但其实可以钻空子，就向下面这行
+            // H2o:firm
+        }
+    })
+</script>
+</html>
