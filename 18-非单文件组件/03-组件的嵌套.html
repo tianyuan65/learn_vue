@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03-组价的嵌套</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 编写App组件标签方法1 -->
+        <app></app>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    // 创建/定义staff组件
+    const staff=Vue.extend({
+        template:`
+            <div>
+                <h2>员工姓名：{{staffName}}</h2>
+                <h2>员工年龄：{{age}}</h2>
+            </div>
+        `,
+        data(){
+            return{
+                staffName:'谷江山',
+                age:29
+            }
+        }
+    })
+
+    // 创建/定义firm组件
+    const firm=Vue.extend({
+        // Vue开发者工具会优先看name配置项中有无指定的组件名，若有就用name配置项指定的；若无就用Vue实例中components里注册的组件名
+        // name:'changzi',
+        template:`
+            <div>
+                <h2>公司名称：{{firmName}}</h2>
+                <h2>公司地址：{{address}}</h2>
+                <staff></staff>
+            </div>
+        `,
+        data(){
+            return {
+                firmName:'729声工场',
+                address:'北京市朝阳区'
+            }
+        },
+        // 在此可以注册它的子组件，但是子组件要在定义父组件前定义，才能不报错，并且访问到(局部注册)
+        components:{
+            staff
+        }
+    })
+
+    // 创建hello组件
+    const hello=Vue.extend({
+        template:`<h1>{{msg}}</h1>`,
+        data(){
+            return{
+                msg:'welcome!!'
+            }
+        }
+    })
+
+    // 创建App组件，该组件里面没什么数据，只是父组件管理自己的子组件
+    const app=Vue.extend({
+        template:`
+            <div>
+                <hello></hello>    
+                <firm></firm>
+            </div>
+        `,
+        components:{
+            Firm:firm,
+            hello
+        }
+    })
+
+    // 创建Vue实例
+    new Vue({
+        // 编写App组件标签方法2
+        template:`<app></app>`,
+        el:'#root',
+        // 注册组件(局部)
+        components:{
+            // 注册App组件
+            app
+            // 这两个组件作为App的子组件，不在components里注册，因为已经在app的components里已经注册好了
+            // Firm:firm,
+            // hello
+        }
+    })
+</script>
+</html>
