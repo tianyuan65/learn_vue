@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05-一个重要的内置关系</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- <firm></firm> -->
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    // 创建/定义firm组件
+    const firm=Vue.extend({
+        // Vue开发者工具会优先看name配置项中有无指定的组件名，若有就用name配置项指定的；若无就用Vue实例中components里注册的组件名
+        name:'changzi',
+        template:`
+            <div>
+                <h2>公司名称：{{firmName}}</h2>
+                <h2>公司地址：{{address}}</h2>
+            </div>
+        `,
+        data(){
+            return {
+                firmName:'729声工场',
+                address:'北京市朝阳区'
+            }
+        }
+    })
+
+    // 创建一个Vue实例
+    const vm=new Vue({
+        el:'#root',
+        data:{
+            msg:'hello'
+        },
+        // comments:{
+        //     firm
+        // }
+    })
+
+    // VueComponent.prototype.__proto__===Vue.prototype，创建firm组件时调用的Vue的extend API，返回的就是Vue组件实例对象，在此将组件命名为firm
+    // console.log(firm.prototype.__proto__===Vue.prototype);  //true
+
+    // 快速复习
+    // 定义一个构造函数
+    // function Demo(){
+    //     this.a=1
+    //     this.b=2
+    // }
+    // // 创建一个Demo的实例对象
+    // const d=new Demo()
+    // // 构造函数的显示原型属性和构造函数的实例对象的隐式原型属性指向同一个原型对象
+    // // 显示原型属性
+    // console.log(Demo.prototype);  //Object
+    // // 隐式原型属性
+    // console.log(d.__proto__);  //Object
+    // console.log(Demo.prototype===d.__proto__);  //true
+</script>
+</html>

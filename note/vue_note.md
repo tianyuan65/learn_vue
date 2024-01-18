@@ -1554,6 +1554,10 @@
                 * data函数、methods中的函数、watch中的函数、computed中的函数，它们的this均是Vue实例对象
         * 5. VueComponent的实例对象，以后简称VC(也可以称之为：组件实例对象)，Vue组件实例对象和Vue实例对象功能相同，有数据代理，数据监测，Vue组件实例对象是Vue实例对象的后代，Vue组件实例对象要依赖Vue实例对象
             * 老师把Vue实例对象，简称为vm，我就继续叫Vue实例了
+        * **6. 一个重要的内置关系：**
+            * (1). 那个重要的内置关系：VueComponent.prototype.__proto__===Vue.prototype
+            * (2). 为什么会有这个关系？让组件实例对象(vc)可以访问到Vue原型上的属性、方法。实例对象的隐式原型属性指向它的缔造者的原型对象，就像vm、vc的隐式原型属性，就指向它们各自的缔造者Vue原型对象和VueComponent原型对象。原本VueComponent.prototype.__proto__的值作为Object(就是单纯地对象)，它的指向O应该是bject的原型对象，但为了vc能够访问到vm的属性及方法，VueComponent.prototype.__proto__的指向就是Vue的原型对象，也就是Vue.prototype。这样。一是为了vc可以访问vm的属性、方法，二是为了能够有个兜底的存在，当vc在自己本身或它的原型对象上找不到想要的方法或属性时，可以去vm的原型对象中找一找。
+                * ![那个重要的内置关系](images/组件实例对象的显式原型属性的隐式原型属性的指向和Vue的显式原型属性的指向的是同一个.png)
 
 
 * **第三章 使用Vue脚手架**
