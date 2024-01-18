@@ -1540,6 +1540,20 @@
                         }
                     }
                   ```
+    * 关于VueComponent:
+        * 1. firm组件本质是一个名为VueComponent的构造函数，且不是程序员定义的，是Vue.extend生成的
+        * 2. 我们只需要写`<firm/>`或`<firm></firm>`，Vue解析时会帮我们创建firm组件的实例对象.
+            * 即Vue帮我们执行的：new VueComponent(options)，options就是我亲自写进去的template、data等
+        * 3. 特别注意：每次调用Vue.extend，返回的都是一个全新的VueComponent！！！相当于张三和张四，连指纹都一样的双胞胎姐妹，再一样那也是两个人
+            * ![调用一次Vue.extend，返回一个全新的Vue组件](images/每次调用Vue.extend返回的都是一个全新的VueComponent.png)
+        * 4. 关于this的指向：
+            * (1). 组件配置中：
+                * data函数、methods中的函数、watch中的函数、computed中的函数，它们的this均是VueComponent实例对象
+                    * ![组件配置当中函数里this的指向是Vue组件实例对象](images/组件配置当中this指向Vue组件实例对象.png)
+            * (2). new Vue()配置中：
+                * data函数、methods中的函数、watch中的函数、computed中的函数，它们的this均是Vue实例对象
+        * 5. VueComponent的实例对象，以后简称VC(也可以称之为：组件实例对象)，Vue组件实例对象和Vue实例对象功能相同，有数据代理，数据监测，Vue组件实例对象是Vue实例对象的后代，Vue组件实例对象要依赖Vue实例对象
+            * 老师把Vue实例对象，简称为vm，我就继续叫Vue实例了
 
 
 * **第三章 使用Vue脚手架**

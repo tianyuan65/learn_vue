@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04-VueComponent</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root">
+        <!-- 编写App组件标签方法1 -->
+        <!-- <app></app> -->
+        <firm></firm>
+        <hello></hello>
+    </div>
+</body>
+<script type="text/javascript">
+    Vue.config.productionTip = false //阻止 vue 在启动时生成生产提示。
+
+    // 创建/定义firm组件
+    const firm=Vue.extend({
+        // Vue开发者工具会优先看name配置项中有无指定的组件名，若有就用name配置项指定的；若无就用Vue实例中components里注册的组件名
+        // name:'changzi',
+        template:`
+            <div>
+                <h2>公司名称：{{firmName}}</h2>
+                <h2>公司地址：{{address}}</h2>
+                <button @click="showName">click to show firmName</button>
+            </div>
+        `,
+        data(){
+            return {
+                firmName:'729声工场',
+                address:'北京市朝阳区'
+            }
+        },
+        methods:{
+            showName(){
+                console.log(this);  //VueComponent，组件配置中的函数的this指向VueComponent实例对象
+                alert(this.name)  //undefined
+            }
+        }
+    })
+
+    console.log(firm instanceof Function);  //true
+    console.log('firmComp',firm);  //ƒ VueComponent(options) {this._init(options);}
+
+    // 创建hello组件
+    const hello=Vue.extend({
+        template:`<h2>{{msg}}</h2>`,
+        data(){
+            return {
+                msg:'hahahhouhhahhaha'
+            }
+        }
+    })
+    console.log('helloComp',hello);
+
+    // 创建Vue实例
+    const vm=new Vue({
+        el:'#root',
+        // 注册组件(局部)
+        components:{
+            firm,
+            hello
+        }
+    })
+</script>
+</html>
