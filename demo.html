@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入Vue -->
+    <script type="text/javascript" src="./js/vue.runtime.js"></script>
+</head>
+<body>
+    <!-- 容器 -->
+    <div id="root"></div>
+</body>
+<script type="text/javascript">
+    new Vue({
+        el:'#root',
+        render(h) {
+            return h('h1','hello')
+        },
+        // template:`<h1>hello</h1>`
+    })
+</script>
+</html>

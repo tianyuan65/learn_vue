@@ -1616,6 +1616,12 @@
             * package.json--应用包配置文件
             * README.md--应用描述文件
             * package-lock.json--包版本控制文件
+        * 3.1.4 关于不同版本的Vue：
+            * 1. vue.js与vue.runtime.xxx.js的区别：
+                * (1). vue.js是完整版的Vue，包含：核心功能+模板解析器
+                * (2). vue.runtime.xxx.js是运行版的Vue，质保函核心功能，没有模板解析器
+            * 2. 因为vue.runtime.xxx.js没有模板解析器，所以不能使用template配置项，需要使用render函数接收到的createElement函数去指定具体内容。所以在刚开始创建脚手架的时候，直接Vue就直接会帮我写好```render: h => h(App)```这样的代码，意思就是入口文件main.js中引入的是运行版的Vue，所以需要执行render函数来渲染App组件。
+                * ```render:createElement=>createElement('h1','hello'),```
     * 3.2 ref与props
     * 3.3 混入
     * 3.4 插件
