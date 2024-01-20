@@ -1586,9 +1586,36 @@
 * **第三章 使用Vue脚手架**
     * 3.1 初始化脚手架
         * 3.1.1 说明
-            
+            * 1. Vue脚手架是Vue官方提供的标准化开发工具(开发平台)，如果Vue脚手架不帮我翻译我写的.vue文件，浏览器不认识就不会在页面上渲染、展示
+            * 2. 最新版本是4.x，这里说的是脚手架的版本(就是vue-cli)，2024年1月19号听说已经是6.x版本，Vue的话升到3.x了，目前在学Vue2.x的话，先学好脚手架的4.x吧。刚用vue-cli脚手架创建vue_test，我的vue-cli版本5.0.8
+            * 3. 文档： https://cli.vuejs.org/zh/。
         * 3.1.2 具体步骤
+            * 1. 第一步(仅第一次执行)：全局安装@vue/cli
+                * npm i -g @vue/cli
+            * 2. 第二步：**切换到你要创建项目的目录**，然后使用命令创建项目
+                * vue create xxxxx
+            * 3. 第三步：启动项目
+                * npm run serve
+            * 备注：
+                * 1. 如出现下载缓慢要配置npm淘宝镜像：npm config set registry https://registry.npm.taobao.org
+                * 2. Vue脚手架隐藏了所有webpack相关的配置，若想查看具体的webpack配置，要执行vue inspect > output.js
         * 3.1.3 模板项目的结构
+            * node_modules
+            * public--静态资源文件夹
+                * favicon.ico--页签图标
+                * **index.html--主页面**
+            * src--源码文件夹
+                * assets--存放静态资源
+                    * logo.png
+                * components--存放组件
+                    * HelloWorld.vue
+                * App.vue--汇总所有组件
+                * main.js--入口文件
+            * .gitignore--版本管制忽略的配置
+            * babel.config.js--babel的配置文件
+            * package.json--应用包配置文件
+            * README.md--应用描述文件
+            * package-lock.json--包版本控制文件
     * 3.2 ref与props
     * 3.3 混入
     * 3.4 插件
