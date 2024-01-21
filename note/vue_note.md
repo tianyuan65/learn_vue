@@ -1641,10 +1641,23 @@
                 * ![用ref读取的标签和组件实例对象](images/用$refs收集想要的元素、组件等.png)
                 * 对于传统的HTML标签来说，ref属性的作用和id、class属性的作用没有差别，但对于组件来说，添加ref属性后，读取的是Vue组件实例对象；给组件标签添加id属性后，读取的会是相应组件对应的完整的DOM结构。在组件间通信时，会被使用
         * 3.2.2 props
-            * 1. 作用：
-            * 2. 读取方式一：
-            * 3. 读取方式二：
-            * 4. 读取方式三：
+            * 1. 作用：用于父组件给子组件传递数据
+            * 2. 读取方式一：只指定名称
+                * ```props:['name','age','setName']```
+            * 3. 读取方式二：指定名称和类型
+                * ```
+                    props:{
+                        name:String,
+                        age:Number,
+                        setName:Funtion
+                    }
+                  ```
+            * 4. 读取方式三：指定名称、类型、必要性、默认值
+                * ```
+                    props:{
+                        name:{type:String,required:true,default:xxx}
+                    }
+                  ```
     * 3.3 混入
     * 3.4 插件
     * 3.5 Todo-list案例
