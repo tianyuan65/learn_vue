@@ -1598,7 +1598,7 @@
                 * npm run serve
             * 备注：
                 * 1. 如出现下载缓慢要配置npm淘宝镜像：npm config set registry https://registry.npm.taobao.org
-                * 2. Vue脚手架隐藏了所有webpack相关的配置，若想查看具体的webpack配置，要执行vue inspect > output.js
+                * 2. Vue脚手架隐藏了所有webpack相关的配置，若想查看具体的webpack配置，要执行vue inspect > output.js，但不要妄想修改配置和固定名，导致代码无法运行的时候会想自杀。
         * 3.1.3 模板项目的结构
             * node_modules
             * public--静态资源文件夹
@@ -1616,13 +1616,35 @@
             * package.json--应用包配置文件
             * README.md--应用描述文件
             * package-lock.json--包版本控制文件
-        * 3.1.4 关于不同版本的Vue：
+        * 3.1.4 关于不同版本的Vue：  
             * 1. vue.js与vue.runtime.xxx.js的区别：
                 * (1). vue.js是完整版的Vue，包含：核心功能+模板解析器
                 * (2). vue.runtime.xxx.js是运行版的Vue，质保函核心功能，没有模板解析器
             * 2. 因为vue.runtime.xxx.js没有模板解析器，所以不能使用template配置项，需要使用render函数接收到的createElement函数去指定具体内容。所以在刚开始创建脚手架的时候，直接Vue就直接会帮我写好```render: h => h(App)```这样的代码，意思就是入口文件main.js中引入的是运行版的Vue，所以需要执行render函数来渲染App组件。
                 * ```render:createElement=>createElement('h1','hello'),```
     * 3.2 ref与props
+        * 3.2.1 ref
+            * 1. 作用：用于给节点打标识
+            * 2. 读取方式：this.$refs.xxxxx
+                * ```
+                    <h1 v-text="msg" ref="title"></h1>
+                    <FirmInfo ref="fir"/>
+                     methods:{
+                        showMsg(){
+                            // console.log(this.msg);
+                            // 通过Vue组件实例对象中的$refs获取DOM元素，可以说代替了原生通过id来获取的方法(原生方法就是document.getElementById(...))
+                            // console.log(this.$refs.title);  //<h1>Welcome!!!!</h1>
+                            console.log(this.$refs);
+                        }
+                    }
+                  ```
+                * ![用ref读取的标签和组件实例对象](images/用$refs收集想要的元素、组件等.png)
+                * 对于传统的HTML标签来说，ref属性的作用和id、class属性的作用没有差别，但对于组件来说，添加ref属性后，读取的是Vue组件实例对象；给组件标签添加id属性后，读取的会是相应组件对应的完整的DOM结构。在组件间通信时，会被使用
+        * 3.2.2 props
+            * 1. 作用：
+            * 2. 读取方式一：
+            * 3. 读取方式二：
+            * 4. 读取方式三：
     * 3.3 混入
     * 3.4 插件
     * 3.5 Todo-list案例
