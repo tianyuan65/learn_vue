@@ -1659,6 +1659,32 @@
                     }
                   ```
     * 3.3 混入
+        * 功能：可以把多个组件共用的配置提取成一个mixin(混入)对象。
+        * 使用方式：
+            * 1. 第一步，定义混合，例如：
+                * ```
+                    {
+                        data(){....},
+                        methods:{.....}
+                        ....
+                    }
+                ```
+            * 2. 第二步，使用混入，例如：
+                * (1). 全局混入：Vue.mixin(xxx)，xxx代表创建的mixin配置的名称，在入口文件中应用
+                    * ![全局混入，应用在main.js文件](images/两个组件实例对象和它们的父组件以及Vue实例对象都要挂载，mounted钩子被调用四次.png)
+                    * ```
+                        // 全局应用mixin
+                        Vue.mixin(mixin)
+                        Vue.mixin(mixin2)
+
+                      ```
+                * (2). 局部混入：mixins：['xxx']，在需要应用的组件当中引入后，添加mixins配置项，将xxx作为数组元素，实现局混入
+                    * ![局部混入，在FirmInfo组件中应用](images/mixin，配置了数据并在FirmInfo组件中引入后.png)
+                    * ![局部混入，在StaffInfo组件中应用](images/mixin，配置了数据在StaffInfo组件中引入.png)
+                    * ```
+                        import {mixin,mixin2} from '../mixin'
+                        mixins:[mixin,mixin2]
+                      ```
     * 3.4 插件
     * 3.5 Todo-list案例
     * 3.6 Vue中的自定义事件
