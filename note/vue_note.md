@@ -1673,6 +1673,8 @@
                 * (1). 全局混入：Vue.mixin(xxx)，xxx代表创建的mixin配置的名称，在入口文件中应用
                     * ![全局混入，应用在main.js文件](images/两个组件实例对象和它们的父组件以及Vue实例对象都要挂载，mounted钩子被调用四次.png)
                     * ```
+                        // 引入mixin，全局混合
+                        import {mixin,mixin2} from './mixin'
                         // 全局应用mixin
                         Vue.mixin(mixin)
                         Vue.mixin(mixin2)
