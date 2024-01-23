@@ -1735,7 +1735,12 @@
                 }
               ```
             * ![插件](images/plugins，插件的威力，可向其中配置mixin、directives、filter等.png)
+    * 补充：scoped样式
+        * 作用：让样式在局部生效，防止冲突
+        * 写法：<style scoped>
+            * ![让样式在局部生效，为组件配置单独的样式](images/scoped，局部样式，为可能同名的样式名配置随机的标签属性.png)
     * 3.5 Todo-list案例
+        * 
     * 3.6 Vue中的自定义事件
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
