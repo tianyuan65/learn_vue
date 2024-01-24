@@ -1749,6 +1749,44 @@
                 * 在哪里展示就保存在哪里，目前保存在TODOList组件当中
         * 3. 交互————从绑定事件监听开始
     * 3.6 Vue中的自定义事件
+        * 当前情况描述及解决方案：在HeaderAdd的输入框中输入数据，可以将其输出，需要将其添加到TodoList中。但因HeaderAdd和TodoList是兄弟组件的关系，以目前的知识储备量无法直接解决这一问题，所以像当初学react时一样，要先把HeaderAdd中获取的todoObj(数据)传给两个组件共同的父组件App，然后TodoList在需要展示时，再从App中拿到数据。
+        * 3.6.2 从HeaderAdd如何将数据传给App？
+            * 1. 首先，把原先写在TodoList中的初始数据放到App当中，给TodoList组件标签添加todos标签并与data当中的todos绑定；
+            * 2. 其次，因为通过props的方式App将数据传给了TodoList组件，在TodoList组件当中，配置props来接收todos数据，如此这些数据就会出现在TodoList组件实例对象上(父传子)；
+            * 3. 再次，需要提前在App当中准备好一个函数，用于接收从HeaderAdd组件来的数据，并将该函数通过组件标签传给HeaderAdd组件，并在合适的时候，也就是需要接收数据展示在页面上的时候，调用该函数，并把新数据作为函数的参数传递进去，从而实现数据传递的目的，在HeaderAdd当中用props配置来接收(子传父)；
+            * 4. 最后，处理一些细节问题，一是，成功通知App组件，向TodoList组件添加数据后，记得清空HeaderAdd组件的输入框，有两种方法；二是提示不能添加空的数据，如下代码：
+                * ```
+                    <input type="text" placeholder="请输入你的任务名称，按回车键确认" @keyup.enter="add"/>
+                    <!-- 配置v-model属性，操作数据，不操作DOM -->
+                    <!-- <input type="text" placeholder="请输入你的任务名称，按回车键确认" v-model="name" /> -->
+                    
+                    // 若给输入框配置v-model属性的话，就用这个方法，不操作DOM，操作数据，Vue会因双向绑定数据
+                    // data(){
+                    //   return {
+                    //     name:''
+                    //   }
+                    // },
+                    methods:{
+                        add(event){
+                        // 校验数据，不能像列表中添加空的数据，若用v-model了的话，就是this.name
+                        if(!event.target.value) return alert('请输入待办事项')
+                        // 通过触发事件的target的value值获取，但用这个方法要给函数加event参数
+                        // 将用户的输入包装成一个todo对象(todoObj)
+                        // console.log(event.target.value);
+                        const todoObj={id:nanoid(),name:event.target.value,done:false}
+                        // 输入框中配置了v-model属性，就用这个
+                        // const todoObj={id:nanoid(),name:this.name,done:false}
+                        // 调用receive函数，通知App组件，去添加的新数据作为参数传递进去
+                        this.addTodo(todoObj)
+                        // 成功添加后清空输入框
+                        event.target.value=''
+                        // 通过给input输入框添加v-model属性，配置双向绑定来获取输入的数据，前提是需要在data中提前设置接收的数据变量名
+                        // 用v-model配置时，可以使用此方法，不操作DOM，操作数据
+                        // this.name=''
+                        // console.log(this.name);
+                        }
+                    }
+                  ```
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
