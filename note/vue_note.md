@@ -1749,8 +1749,7 @@
                 * 在哪里展示就保存在哪里，目前保存在TODOList组件当中
         * 3. 交互————从绑定事件监听开始
     * 3.6 Vue中的自定义事件
-        * 当前情况描述及解决方案：在HeaderAdd的输入框中输入数据，可以将其输出，需要将其添加到TodoList中。但因HeaderAdd和TodoList是兄弟组件的关系，以目前的知识储备量无法直接解决这一问题，所以像当初学react时一样，要先把HeaderAdd中获取的todoObj(数据)传给两个组件共同的父组件App，然后TodoList在需要展示时，再从App中拿到数据。
-        * 3.6.2 从HeaderAdd如何将数据传给App？
+        * 3.6.1 添加todoitem--当前情况描述及解决方案：在HeaderAdd的输入框中输入数据，可以将其输出，需要将其添加到TodoList中。但因HeaderAdd和TodoList是兄弟组件的关系，以目前的知识储备量无法直接解决这一问题，所以像当初学react时一样，要先把HeaderAdd中获取的todoObj(数据)传给两个组件共同的父组件App，然后TodoList在需要展示时，再从App中拿到数据。从HeaderAdd如何将数据传给App？
             * 1. 首先，把原先写在TodoList中的初始数据放到App当中，给TodoList组件标签添加todos标签并与data当中的todos绑定；
             * 2. 其次，因为通过props的方式App将数据传给了TodoList组件，在TodoList组件当中，配置props来接收todos数据，如此这些数据就会出现在TodoList组件实例对象上(父传子)；
             * 3. 再次，需要提前在App当中准备好一个函数，用于接收从HeaderAdd组件来的数据，并将该函数通过组件标签传给HeaderAdd组件，并在合适的时候，也就是需要接收数据展示在页面上的时候，调用该函数，并把新数据作为函数的参数传递进去，从而实现数据传递的目的，在HeaderAdd当中用props配置来接收(子传父)；
@@ -1759,7 +1758,7 @@
                     <input type="text" placeholder="请输入你的任务名称，按回车键确认" @keyup.enter="add"/>
                     <!-- 配置v-model属性，操作数据，不操作DOM -->
                     <!-- <input type="text" placeholder="请输入你的任务名称，按回车键确认" v-model="name" /> -->
-                    
+
                     // 若给输入框配置v-model属性的话，就用这个方法，不操作DOM，操作数据，Vue会因双向绑定数据
                     // data(){
                     //   return {
@@ -1787,6 +1786,10 @@
                         }
                     }
                   ```
+        * 3.6.2 todoitem的勾选与取消
+            * 在TodoItem组件中给input输入框绑定change事件，事件名为handleCheck，在该函数中通知App组件，将对应的todo对象的值取反，接收从父组件TodoList来的checkTodo函数，并将参数id传进去，操作事项的勾选与取消。但因数组在App组件，要改变其中todos的done值，需要在handleCheck函数中调用从App组件逐层传递来的checkTodo函数，App组件通过组件标签将checkTodo函数传给TodoList组件，TodoList组件通过props配置接收后，立马也通过组件标签将函数传给TodoItem组件，如此checkTodo函数就会在TodoItem组件实例对象中了。本着数据在哪儿，操作数据的函数在哪儿的原则，在App函数当中调用checkTodo函数时接收id参数，在函数中先遍历todos，并设置判断，若遍历后的todo的id等于点击的item的id，则done值取反后赋值返回，即可。
+                * ![组件间通信，数据的逐层传递](images/组件间通信，逐层传递效果.png)
+            * 除了上述的方法，还有给input输入框配置v-model属性，与todo.done进行绑定，因为是双向数据绑定，所以当勾选或取消勾选时，都会引起todo.done的值的变化，todo.done值的变化会引起App组件当中的todos里面的done属性值的改变，从而也可以实现上面的图示效果，但不建议，因为通过props从祖先组件传来的数据只读不可改，但这里用这种方法确确实实修改了数据，可能会报错，并且因为污染了数据，在项目中的话也很难找到错误。我的话从vscode里就开始报了这样的错。```Unexpected mutation of "todo" prop.```
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
