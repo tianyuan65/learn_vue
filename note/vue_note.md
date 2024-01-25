@@ -1802,7 +1802,7 @@
                         //   if(todo.done) i++
                         // });
                         // return i
-                        
+
                         // 将统计结果返回
                         return this.todos.reduce((pre,todo)=>{
                         // 若current.done为true，pre就+1，否则+0
@@ -1810,6 +1810,49 @@
                         },0)
                     }
                   ```
+        * 3.6.5 底部交互
+            * 剩下的就是全选或取消全选的勾选框和删除所有已完成事项的任务。实现全选或取消全选有两种方法：
+                * 1. 一是给input的checked属性绑定isAll计算属性函数，在isAll中统计已完成数量是否与全部事项数量相等，并且全部事项数量是否大于0，是则让勾选框勾上，不相等就不勾上，并且等于0时，操作底部直接消失。又需要调用从App组件中传来的checkAllTodo函数，在checkAllTodo函数内遍历todos数组，给todo.done值赋值checkAllTodo的参数done，这个参数done的值是FooterCount组件的checkAll函数的参数event的target.checked的值。
+                    * ```
+                        App
+                        // 全选or取消全选
+                        checkAllTodo(done){
+                            this.todos.forEach(todo=>{
+                                todo.done=done
+                            })
+                        },
+                        FooterCount
+                        <input type="checkbox" :checked="isAll" @change="checkAll"/>
+                        computed:{
+                            isAll(){
+                            // 若已完成事项数量与全部事项数量相等，则运行该函数，并让选项框勾上，且总数要大于0，等于0的时候就不勾上了
+                            return this.doneTotal===this.total && this.total>0
+                            }
+                        },
+                        methods:{
+                            checkAll(event){
+                                // 调用从App组件来的checkAllTodo函数，传参event.target.checked
+                                this.checkAllTodo(event.target.checked)
+                                // console.log(event.target.checked);  //勾上则为true，没勾上是false
+                            },
+                        }
+                      ```
+                * 2. 二是给input添加双向数据绑定的v-model属性，还是绑定isAll，只不过因为使用v-model的话，会导致数据发生改变，但isAll并不是props接收的函数，所以可以使用，就是不能写成简写的函数形式，需要写成完整版的对象形式，在其中的get函数中依旧返回已完成事项数量和全部数量是否相等的值，在其中的set函数中调用props接收的checkAllTodo函数，传参value即可，且有个优点，就是因为双向数据绑定取消全选时，原先勾选上todoitem的会取消勾选，这么写就不用配置methods了。
+                    * ```
+                        FooterCount
+                        <input type="checkbox" v-model="isAll"/>
+                        isAll:{
+                            get(){
+                                return this.doneTotal===this.total && this.total>0
+                            },
+                            set(value){
+                                // 发生变化就调用该函数，并把value作为参数传进去，有一个方便的优点就是，取消全选时，原先勾选上todoitem的会取消勾选，双向数据绑定嘛，这么写就不用配置methods了
+                                this.checkAllTodo(value)
+                                // console.log(value);  //全选上就是true，没全选就是false
+                            }
+                        }
+                      ```
+                * 3. 删除所有已完成事项，在App组件创建清除所有已完成todo的函数clearAllTodo，在其中用filter方法过滤掉todo.done值为false的对象，拿到todo.done值为true的对象后在FooerCount组件当中的clearDone函数中调用clearAllTodo，达成删除已完成事项的目标。
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
