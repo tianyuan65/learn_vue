@@ -1792,6 +1792,24 @@
             * 除了上述的方法，还有给input输入框配置v-model属性，与todo.done进行绑定，因为是双向数据绑定，所以当勾选或取消勾选时，都会引起todo.done的值的变化，todo.done值的变化会引起App组件当中的todos里面的done属性值的改变，从而也可以实现上面的图示效果，但不建议，因为通过props从祖先组件传来的数据只读不可改，但这里用这种方法确确实实修改了数据，可能会报错，并且因为污染了数据，在项目中的话也很难找到错误。我的话从vscode里就开始报了这样的错。```Unexpected mutation of "todo" prop.```
         * 3.6.3 删除todoItem
             * 和勾选或取消勾选todoItem的步骤类似，先给每个todoItem的删除按钮绑定点击事件，事件函数名为handleDelete，其次，需要在函数中设置一个判断，是否确定删除的提示confirm，然后到App组件当中声明函数deleteTodo，在其中过滤，也是变相地遍历以下todos，在过滤的回调中，将与点击的id不符合的id过滤出来，作为返回值返回，最后，进行数据/函数逐层传递，将函数作为组件标签的属性，传给TodoList，TodoList用props接收后，立马作为组件标签的属性传给TodoItem，TodoItem用props接收后，在组件实例对象里就有了该函数，所以在handleDelete中调用，并将参数id传进去即可。
+        * 3.6.4 底部统计
+            * 在底部需要时时统计TodoList中的todoitem的数量，就需要在App通过组件标签将todos给FooterCount组件传过去，关键是下面的如何统计出已完成事项。可以用forEach方法来遍历todos，并在回调中设置判断，若todo.done的值为true，则统计完成的事项数量加1；也可以用reduce方法，在reduce方法中接收两个参数，第一个数回调函数，第二个是初始值，reduce的回调中统计完成事项数量，将初始值pre(也就是0)加上todo.done若为true+1，否则+0的值作为返回值返回，即完成已完成事项的统计。
+                * ```
+                    doneTotal(){
+                        // forEach遍历法
+                        // let i=0
+                        // this.todos.forEach(todo => {
+                        //   if(todo.done) i++
+                        // });
+                        // return i
+                        
+                        // 将统计结果返回
+                        return this.todos.reduce((pre,todo)=>{
+                        // 若current.done为true，pre就+1，否则+0
+                        return pre + (todo.done ? 1 : 0)
+                        },0)
+                    }
+                  ```
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
