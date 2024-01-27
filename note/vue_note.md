@@ -1879,6 +1879,49 @@
                 }
               ```
             * ![$emit()触发事件](images/$emit()触发自定义事件,子组件传递数据给父组件.png)
+        * 3.6.3 解绑事件，在运行完所有组件后需要与其身上的组件实例对象和Vue实例对象中的自定义事件进行解绑的操作，解绑单个自定义事件，则调用组件实例对象或Vue实例对象的$off方法，将要解绑的单个事件作为参数传进去即可；但若是多个事件，需要把多个事件放到一个数组里，再把数组作为参数传进$off方法中；也有暴力解绑所有自定义事件的方式，就是$off方法不传任何参数
+            * ```
+                <button @click="unbind">click to unbind the custom event</button><br>
+                methods:{
+                    sendStaffName(){
+                        // 触发StaffInfo组件实例对象身上的atstaff事件
+                        this.$emit('atstaff',this.name,111,222,'444')
+                        // 触发StaffInfo组件实例对象身上的demo事件
+                        this.$emit('demo')
+                    },
+                    unbind(){
+                        // 解绑一个自定义事件
+                        // this.$off('atstaff')
+                        // 解绑多个自定义事件，将需要解绑的多个事件名写在数组里，再作为参数传进去
+                        // this.$off(['atstaff','demo'])
+                        // 解绑所有自定义事件，真暴力
+                        this.$off()
+                    },
+                }
+              ```
+            * ![解绑单个事件，其他的照常运行](images/解绑单个自定义事件.png)
+            * ![解绑多个事件](images/解绑多个自定义事件.png)
+            * 当然除了解绑事件的方法，还有销毁的方法作为解绑的方法之一，需要调用$destroy方法，即销毁当前组件实例对象或Vue实例对象，销毁后所有组件实例对象或Vue实例对象的自定义事件将不再奏效，下面为某个子组件实例对象上和Vue实例对象身上的代码演示。
+                * ```
+                    methods:{
+                        death(){
+                            // 销毁当前组件实例对象，销毁后所有StaffInfo组件实例的自定义事件全都不奏效了
+                            this.$destroy()
+                        },
+                    }
+                  ```
+                * ```
+                    // 创建Vue实例对象
+                    new Vue({
+                        render:h=>h(App),
+                        mounted(){
+                            // 挂载三秒后销毁该Vue实例
+                            setTimeout(() => {
+                                this.$destroy()
+                            }, 3000);
+                        }
+                    }).$mount('#app')
+                  ```
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
