@@ -1748,8 +1748,7 @@
             * 2.2 数据保存在哪个组件？
                 * 在哪里展示就保存在哪里，目前保存在TODOList组件当中
         * 3. 交互————从绑定事件监听开始
-    * 3.6 Vue中的自定义事件
-        * 3.6.1 添加todoitem--当前情况描述及解决方案：在HeaderAdd的输入框中输入数据，可以将其输出，需要将其添加到TodoList中。但因HeaderAdd和TodoList是兄弟组件的关系，以目前的知识储备量无法直接解决这一问题，所以像当初学react时一样，要先把HeaderAdd中获取的todoObj(数据)传给两个组件共同的父组件App，然后TodoList在需要展示时，再从App中拿到数据。从HeaderAdd如何将数据传给App？
+            * 3.5.1 添加todoitem--当前情况描述及解决方案：在HeaderAdd的输入框中输入数据，可以将其输出，需要将其添加到TodoList中。但因HeaderAdd和TodoList是兄弟组件的关系，以目前的知识储备量无法直接解决这一问题，所以像当初学react时一样，要先把HeaderAdd中获取的todoObj(数据)传给两个组件共同的父组件App，然后TodoList在需要展示时，再从App中拿到数据。从HeaderAdd如何将数据传给App？
             * 1. 首先，把原先写在TodoList中的初始数据放到App当中，给TodoList组件标签添加todos标签并与data当中的todos绑定；
             * 2. 其次，因为通过props的方式App将数据传给了TodoList组件，在TodoList组件当中，配置props来接收todos数据，如此这些数据就会出现在TodoList组件实例对象上(父传子)；
             * 3. 再次，需要提前在App当中准备好一个函数，用于接收从HeaderAdd组件来的数据，并将该函数通过组件标签传给HeaderAdd组件，并在合适的时候，也就是需要接收数据展示在页面上的时候，调用该函数，并把新数据作为函数的参数传递进去，从而实现数据传递的目的，在HeaderAdd当中用props配置来接收(子传父)；
@@ -1786,73 +1785,100 @@
                         }
                     }
                   ```
-        * 3.6.2 todoitem的勾选与取消
-            * 在TodoItem组件中给input输入框绑定change事件，事件名为handleCheck，在该函数中通知App组件，将对应的todo对象的值取反，接收从父组件TodoList来的checkTodo函数，并将参数id传进去，操作事项的勾选与取消。但因数组在App组件，要改变其中todos的done值，需要在handleCheck函数中调用从App组件逐层传递来的checkTodo函数，App组件通过组件标签将checkTodo函数传给TodoList组件，TodoList组件通过props配置接收后，立马也通过组件标签将函数传给TodoItem组件，如此checkTodo函数就会在TodoItem组件实例对象中了。本着数据在哪儿，操作数据的函数在哪儿的原则，在App函数当中调用checkTodo函数时接收id参数，在函数中先遍历todos，并设置判断，若遍历后的todo的id等于点击的item的id，则done值取反后赋值返回，即可。
-                * ![组件间通信，数据的逐层传递](images/组件间通信，逐层传递效果.png)
-            * 除了上述的方法，还有给input输入框配置v-model属性，与todo.done进行绑定，因为是双向数据绑定，所以当勾选或取消勾选时，都会引起todo.done的值的变化，todo.done值的变化会引起App组件当中的todos里面的done属性值的改变，从而也可以实现上面的图示效果，但不建议，因为通过props从祖先组件传来的数据只读不可改，但这里用这种方法确确实实修改了数据，可能会报错，并且因为污染了数据，在项目中的话也很难找到错误。我的话从vscode里就开始报了这样的错。```Unexpected mutation of "todo" prop.```
-        * 3.6.3 删除todoItem
-            * 和勾选或取消勾选todoItem的步骤类似，先给每个todoItem的删除按钮绑定点击事件，事件函数名为handleDelete，其次，需要在函数中设置一个判断，是否确定删除的提示confirm，然后到App组件当中声明函数deleteTodo，在其中过滤，也是变相地遍历以下todos，在过滤的回调中，将与点击的id不符合的id过滤出来，作为返回值返回，最后，进行数据/函数逐层传递，将函数作为组件标签的属性，传给TodoList，TodoList用props接收后，立马作为组件标签的属性传给TodoItem，TodoItem用props接收后，在组件实例对象里就有了该函数，所以在handleDelete中调用，并将参数id传进去即可。
-        * 3.6.4 底部统计
-            * 在底部需要时时统计TodoList中的todoitem的数量，就需要在App通过组件标签将todos给FooterCount组件传过去，关键是下面的如何统计出已完成事项。可以用forEach方法来遍历todos，并在回调中设置判断，若todo.done的值为true，则统计完成的事项数量加1；也可以用reduce方法，在reduce方法中接收两个参数，第一个数回调函数，第二个是初始值，reduce的回调中统计完成事项数量，将初始值pre(也就是0)加上todo.done若为true+1，否则+0的值作为返回值返回，即完成已完成事项的统计。
-                * ```
-                    doneTotal(){
-                        // forEach遍历法
-                        // let i=0
-                        // this.todos.forEach(todo => {
-                        //   if(todo.done) i++
-                        // });
-                        // return i
+            * 3.5.2 todoitem的勾选与取消
+                * 在TodoItem组件中给input输入框绑定change事件，事件名为handleCheck，在该函数中通知App组件，将对应的todo对象的值取反，接收从父组件TodoList来的checkTodo函数，并将参数id传进去，操作事项的勾选与取消。但因数组在App组件，要改变其中todos的done值，需要在handleCheck函数中调用从App组件逐层传递来的checkTodo函数，App组件通过组件标签将checkTodo函数传给TodoList组件，TodoList组件通过props配置接收后，立马也通过组件标签将函数传给TodoItem组件，如此checkTodo函数就会在TodoItem组件实例对象中了。本着数据在哪儿，操作数据的函数在哪儿的原则，在App函数当中调用checkTodo函数时接收id参数，在函数中先遍历todos，并设置判断，若遍历后的todo的id等于点击的item的id，则done值取反后赋值返回，即可。
+                    * ![组件间通信，数据的逐层传递](images/组件间通信，逐层传递效果.png)
+                * 除了上述的方法，还有给input输入框配置v-model属性，与todo.done进行绑定，因为是双向数据绑定，所以当勾选或取消勾选时，都会引起todo.done的值的变化，todo.done值的变化会引起App组件当中的todos里面的done属性值的改变，从而也可以实现上面的图示效果，但不建议，因为通过props从祖先组件传来的数据只读不可改，但这里用这种方法确确实实修改了数据，可能会报错，并且因为污染了数据，在项目中的话也很难找到错误。我的话从vscode里就开始报了这样的错。```Unexpected mutation of "todo" prop.```
+            * 3.5.3 删除todoItem
+                * 和勾选或取消勾选todoItem的步骤类似，先给每个todoItem的删除按钮绑定点击事件，事件函数名为handleDelete，其次，需要在函数中设置一个判断，是否确定删除的提示confirm，然后到App组件当中声明函数deleteTodo，在其中过滤，也是变相地遍历以下todos，在过滤的回调中，将与点击的id不符合的id过滤出来，作为返回值返回，最后，进行数据/函数逐层传递，将函数作为组件标签的属性，传给TodoList，TodoList用props接收后，立马作为组件标签的属性传给TodoItem，TodoItem用props接收后，在组件实例对象里就有了该函数，所以在handleDelete中调用，并将参数id传进去即可。
+            * 3.5.4 底部统计
+                * 在底部需要时时统计TodoList中的todoitem的数量，就需要在App通过组件标签将todos给FooterCount组件传过去，关键是下面的如何统计出已完成事项。可以用forEach方法来遍历todos，并在回调中设置判断，若todo.done的值为true，则统计完成的事项数量加1；也可以用reduce方法，在reduce方法中接收两个参数，第一个数回调函数，第二个是初始值，reduce的回调中统计完成事项数量，将初始值pre(也就是0)加上todo.done若为true+1，否则+0的值作为返回值返回，即完成已完成事项的统计。
+                    * ```
+                        doneTotal(){
+                            // forEach遍历法
+                            // let i=0
+                            // this.todos.forEach(todo => {
+                            //   if(todo.done) i++
+                            // });
+                            // return i
 
-                        // 将统计结果返回
-                        return this.todos.reduce((pre,todo)=>{
-                        // 若current.done为true，pre就+1，否则+0
-                        return pre + (todo.done ? 1 : 0)
-                        },0)
+                            // 将统计结果返回
+                            return this.todos.reduce((pre,todo)=>{
+                            // 若current.done为true，pre就+1，否则+0
+                            return pre + (todo.done ? 1 : 0)
+                            },0)
+                        }
+                    ```
+            * 3.5.5 底部交互
+                * 剩下的就是全选或取消全选的勾选框和删除所有已完成事项的任务。实现全选或取消全选有两种方法：
+                    * 1. 一是给input的checked属性绑定isAll计算属性函数，在isAll中统计已完成数量是否与全部事项数量相等，并且全部事项数量是否大于0，是则让勾选框勾上，不相等就不勾上，并且等于0时，操作底部直接消失。又需要调用从App组件中传来的checkAllTodo函数，在checkAllTodo函数内遍历todos数组，给todo.done值赋值checkAllTodo的参数done，这个参数done的值是FooterCount组件的checkAll函数的参数event的target.checked的值。
+                        * ```
+                            App
+                            // 全选or取消全选
+                            checkAllTodo(done){
+                                this.todos.forEach(todo=>{
+                                    todo.done=done
+                                })
+                            },
+                            FooterCount
+                            <input type="checkbox" :checked="isAll" @change="checkAll"/>
+                            computed:{
+                                isAll(){
+                                // 若已完成事项数量与全部事项数量相等，则运行该函数，并让选项框勾上，且总数要大于0，等于0的时候就不勾上了
+                                return this.doneTotal===this.total && this.total>0
+                                }
+                            },
+                            methods:{
+                                checkAll(event){
+                                    // 调用从App组件来的checkAllTodo函数，传参event.target.checked
+                                    this.checkAllTodo(event.target.checked)
+                                    // console.log(event.target.checked);  //勾上则为true，没勾上是false
+                                },
+                            }
+                        ```
+                    * 2. 二是给input添加双向数据绑定的v-model属性，还是绑定isAll，只不过因为使用v-model的话，会导致数据发生改变，但isAll并不是props接收的函数，所以可以使用，就是不能写成简写的函数形式，需要写成完整版的对象形式，在其中的get函数中依旧返回已完成事项数量和全部数量是否相等的值，在其中的set函数中调用props接收的checkAllTodo函数，传参value即可，且有个优点，就是因为双向数据绑定取消全选时，原先勾选上todoitem的会取消勾选，这么写就不用配置methods了。
+                        * ```
+                            FooterCount
+                            <input type="checkbox" v-model="isAll"/>
+                            isAll:{
+                                get(){
+                                    return this.doneTotal===this.total && this.total>0
+                                },
+                                set(value){
+                                    // 发生变化就调用该函数，并把value作为参数传进去，有一个方便的优点就是，取消全选时，原先勾选上todoitem的会取消勾选，双向数据绑定嘛，这么写就不用配置methods了
+                                    this.checkAllTodo(value)
+                                    // console.log(value);  //全选上就是true，没全选就是false
+                                }
+                            }
+                        ```
+                    * 3. 删除所有已完成事项，在App组件创建清除所有已完成todo的函数clearAllTodo，在其中用filter方法过滤掉todo.done值为false的对象，拿到todo.done值为true的对象后在FooerCount组件当中的clearDone函数中调用clearAllTodo，达成删除已完成事项的目标。
+    * 3.6 Vue中的自定义事件
+        * 3.6.1 绑定事件监听，要区别于通过父组件给子组件的组件标签传递函数的props实现，子组件给父组件传递数据
+            * 1. 方法一：创建自定义事件名后，为其绑定函数，在methods调用绑定的函数后传参，表示接收来自子组件的数据，并在子组件中创建传递数据的函数，在传递数据的函数中，调用子组件实例对象的$emit方法，并向其中传递需要触发的事件名，和要传递的数据作为参数即可。
+                * ```
+                    <StaffInfo @atstaff="getStaffName"/>
+                    methods:{
+                        // 自定义事件方式绑定事件监听，传递数据
+                        getStaffName(name){
+                            console.log('App got staff name:',name);
+                        }
                     }
                   ```
-        * 3.6.5 底部交互
-            * 剩下的就是全选或取消全选的勾选框和删除所有已完成事项的任务。实现全选或取消全选有两种方法：
-                * 1. 一是给input的checked属性绑定isAll计算属性函数，在isAll中统计已完成数量是否与全部事项数量相等，并且全部事项数量是否大于0，是则让勾选框勾上，不相等就不勾上，并且等于0时，操作底部直接消失。又需要调用从App组件中传来的checkAllTodo函数，在checkAllTodo函数内遍历todos数组，给todo.done值赋值checkAllTodo的参数done，这个参数done的值是FooterCount组件的checkAll函数的参数event的target.checked的值。
-                    * ```
-                        App
-                        // 全选or取消全选
-                        checkAllTodo(done){
-                            this.todos.forEach(todo=>{
-                                todo.done=done
-                            })
-                        },
-                        FooterCount
-                        <input type="checkbox" :checked="isAll" @change="checkAll"/>
-                        computed:{
-                            isAll(){
-                            // 若已完成事项数量与全部事项数量相等，则运行该函数，并让选项框勾上，且总数要大于0，等于0的时候就不勾上了
-                            return this.doneTotal===this.total && this.total>0
-                            }
-                        },
-                        methods:{
-                            checkAll(event){
-                                // 调用从App组件来的checkAllTodo函数，传参event.target.checked
-                                this.checkAllTodo(event.target.checked)
-                                // console.log(event.target.checked);  //勾上则为true，没勾上是false
-                            },
-                        }
-                      ```
-                * 2. 二是给input添加双向数据绑定的v-model属性，还是绑定isAll，只不过因为使用v-model的话，会导致数据发生改变，但isAll并不是props接收的函数，所以可以使用，就是不能写成简写的函数形式，需要写成完整版的对象形式，在其中的get函数中依旧返回已完成事项数量和全部数量是否相等的值，在其中的set函数中调用props接收的checkAllTodo函数，传参value即可，且有个优点，就是因为双向数据绑定取消全选时，原先勾选上todoitem的会取消勾选，这么写就不用配置methods了。
-                    * ```
-                        FooterCount
-                        <input type="checkbox" v-model="isAll"/>
-                        isAll:{
-                            get(){
-                                return this.doneTotal===this.total && this.total>0
-                            },
-                            set(value){
-                                // 发生变化就调用该函数，并把value作为参数传进去，有一个方便的优点就是，取消全选时，原先勾选上todoitem的会取消勾选，双向数据绑定嘛，这么写就不用配置methods了
-                                this.checkAllTodo(value)
-                                // console.log(value);  //全选上就是true，没全选就是false
-                            }
-                        }
-                      ```
-                * 3. 删除所有已完成事项，在App组件创建清除所有已完成todo的函数clearAllTodo，在其中用filter方法过滤掉todo.done值为false的对象，拿到todo.done值为true的对象后在FooerCount组件当中的clearDone函数中调用clearAllTodo，达成删除已完成事项的目标。
+            * 2. 方法2：在子组件的组件标签上添加ref属性，使用ref给子组件的组件实例对象的事件名绑定$on API，随后给$on API传参传递数据的函数，以备触发事件时调用。
+                * ```
+                    <StaffInfo ref="staff"/>
+                    mounted:{
+                        this.$refs.staff.$on('atstaff',this.getStaffName)
+                    }
+                  ```
+        * 3.6.2 触发事件
+            * ```
+                sendStaffName(){
+                    // 触发StaffInfo组件实例对象身上的atstaff事件
+                    this.$emit('atstaff',this.name)
+                }
+              ```
+            * ![$emit()触发事件](images/$emit()触发自定义事件,子组件传递数据给父组件.png)
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
