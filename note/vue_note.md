@@ -1986,6 +1986,39 @@
                   ```
                 * ![普通函数时this指向是触发事件的子组件](images/普通函数时this的指向是StaffInfo组件实例.png)
                 * ![箭头函数时this因为没有自己的this，会往外找，在mounted钩子里this就指向实际所在的组件实例，也就是App](images/箭头函数时this的指向是App组件实例.png)
+        * 3.6.5 TodoList自定义事件，将案例中所有子组件给父组件传递数据的方式改成配置自定义事件的方式，也就是绑定在HeaderAdd和FooterCount组件标签上的所有事件的函数换个方式调用
+            * ```
+                <!-- 自定义事件名addTodo，事件回调函数名addTodo，下面有addTodo函数 -->
+                <HeaderAdd @addTodo="addTodo"/>
+                <!-- 自定义事件名为checkAllTodo和clearAllTodo，事件回调函数名checkAllTodo和clearAllTodo，下面有函数，:todos不能改，todos是数据 -->
+                <FooterCount :todos="todos" @checkAllTodo="checkAllTodo" @clearAllTodo="clearAllTodo"/>
+                ......
+                methods:{
+                    add(event){
+                        // 用$emit方法触发自定义事件，参数为触发的事件名和数据
+                        this.$emit('addTodo',todoObj)
+                    }
+                }
+                ......
+                computed:{
+                    isAll:{
+                        get(){
+                            return this.doneTotal===this.total && this.total>0
+                        },
+                        set(value){
+                            this.$emit('checkAllTodo',value)
+                        }
+                    }
+                },
+                methods:{
+                    clearDone(){
+                        if(confirm('你来真的？')){
+                            this.$emit('clearAllTodo')
+                        }
+                    }
+                }
+              ```
+            * ![触发FooterCount组件的checkAllTodo事件](images/触发全选事件.png)
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
