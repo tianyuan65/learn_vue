@@ -1922,6 +1922,70 @@
                         }
                     }).$mount('#app')
                   ```
+        * 3.6.4 组件的自定义事件总结
+            * 1. 一种组件间通信的方式，适用于子组件==>父组件
+            * 2. 使用场景：A是父组件，B是子组件，子组件想给父组件传数据，那么就要在A中给B绑定自定义事件(事件的回调在父组件中)
+            * 3. 绑定自定义事件
+                * (1). 方法1，在父组件中：
+                    * ```<StaffInfo @atstaff="getStaffName" @demo="m1"/>``` 或 ```<StaffInfo v-on:atstaff="getStaffName" v-on:demo="m1"/>```
+                * (2). 方法2，在父组件中：
+                    * ```
+                        <StaffInfo ref="staff"/>
+                        ......
+                        methods:{
+                            this.$refs.staff.$on('atstaff',this.getStaffName)
+                        }
+                    ```
+                * (3). 若想让自定义事件只触发一次，可以使用once修饰符，或$once方法
+                    * ```
+                        <StaffInfo @atstaff.once="getStaffName"/> or
+                        this.$refs.staff.$once('atstaff',this.getStaffName)
+                      ```
+            * 4. 触发自定义事件：
+                * ```
+                    methods：{
+                        sendStaffName(){
+                            // 触发StaffInfo组件实例对象身上的atstaff事件
+                            this.$emit('atstaff',this.name,111,222,'444')
+                            // this.$emit('demo')
+                            this.$emit('click')
+                        }
+                    }
+                  ```
+            * 5. 解绑自定义事件
+                * ```
+                     unbind(){
+                        // 解绑一个自定义事件
+                        this.$off('atstaff')
+                        // 解绑多个自定义事件，将需要解绑的多个事件名写在数组里，再作为参数传进去
+                        // this.$off(['atstaff','demo'])
+                        // 解绑所有自定义事件，真暴力
+                        // this.$off()
+                    }
+                  ```
+            * 6. 组件上也可以绑定原生DOM事件，需要配合native修饰符使用
+                * ```
+                    <StaffInfo ref="staff" @click.native="show"/>
+                    ......
+                    methods:{
+                        show(){
+                            alert(123)
+                        }
+                    }
+                  ```
+            * 7. 注意：通过```this.$ref.xxx.$on('atstaff',callback)```绑定自定义事件时，回调要么配置在methods中，就像绑定自定义事件的第二种方法，要么用箭头函数，否则提示的指向会出现问题！！
+                * ```
+                    mounted(){
+                        // 若没有准备函数，可以在$on方法传递一个箭头函数，并传递想要传递的数据作为参数，这种方式不能把函数写成普通函数，普通函数的this指向会是触发该事件的那个子组件，而不是App组件
+                        this.$refs.staff.$on('atstaff',(name,...params)=>{
+                            console.log('App got staff name:',name,...params);
+                            this.staffName=name
+                            console.log(this);
+                        })
+                    }
+                  ```
+                * ![普通函数时this指向是触发事件的子组件](images/普通函数时this的指向是StaffInfo组件实例.png)
+                * ![箭头函数时this因为没有自己的this，会往外找，在mounted钩子里this就指向实际所在的组件实例，也就是App](images/箭头函数时this的指向是App组件实例.png)
     * 3.7 全局事件总线
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
