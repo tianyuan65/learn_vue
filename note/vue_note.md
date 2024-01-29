@@ -2021,41 +2021,91 @@
             * ![触发FooterCount组件的checkAllTodo事件](images/触发全选事件.png)
     * 3.7 全局事件总线(GlobalEventBus)
         * 3.7.1 理解
-            * 1. 一种组件间铜线的方式，适用于任意组件键通信
-            * 2. 安装全局事件总线
-                * ```
-                    // 创建Vue实例对象
-                    new Vue({
-                        ......
-                        beforeCreate(){
-                            // 在beforeCreate钩子里，往Vue原型对象上设置x$bus属性，x$bus的属性值就是当前Vue实例对象，表示Vue事来和任何组件实例都可以找到并使用它，$bus就是当前应用的Vue实例对象
-                            Vue.prototype.$bus=this  //安装全局事件总线
-                        },
-                        ......
-                    }).$mount('#app')
-                ```
-            * 3. 使用时间总线
-                * 3.1 接收数据：A组件向接收数据，则在A组件中给$bus绑定自定义事件，事件的回调留在A组件自身。FirmInfo组件接收数据，在FirmInfo绑定自定义事件hello，并在自身绑定事件的回调
-                    * ```
-                        mounted(){
-                            this.$bus.$on('hello',data=>{
-                                console.log('It is FirmInfo component, I got his name',data);
-                            })
-                        },
-                    ```
-                * 3.2 提供数据：StaffInfo组件发送/提供数据，调用$bus(傀儡)的$emit方法，与之绑定hello事件，并提供数据作为参数。
-                    * ```
-                        methods:{
-                            sendStaffName(){
-                                this.$bus.$emit('hello',this.name)
-                            }
-                        }
-                    ```
-            * 4. 最好在beforeDestroy钩子中，用$off去解绑**当前组件所用到的事件。$off必须得传递当前组件用到的事件名作为参数，啥也不写的意思是绑在傀儡身上的所有事件全部解绑，会出事**
+            * 1. 一种组件间通信的方式，适用于任意组件键通信
         * 3.7.2 指定事件总线对象
+            * ```
+                // 创建Vue实例对象
+                new Vue({
+                    ......
+                    beforeCreate(){
+                        // 在beforeCreate钩子里，往Vue原型对象上设置x$bus属性，x$bus的属性值就是当前Vue实例对象，表示Vue事来和任何组件实例都可以找到并使用它，$bus就是当前应用的Vue实例对象
+                        Vue.prototype.$bus=this  //安装全局事件总线
+                    },
+                    ......
+                }).$mount('#app')
+              ```
         * 3.7.3 绑定事件
+            * 接收数据：A组件向接收数据，则在A组件中给$bus绑定自定义事件，事件的回调留在A组件自身。FirmInfo组件接收数据，在FirmInfo绑定自定义事件hello，并在自身绑定事件的回调
+            * ```
+                mounted(){
+                    this.$bus.$on('hello',data=>{
+                        console.log('It is FirmInfo component, I got his name',data);
+                    })
+                },
+              ```
         * 3.7.4 分发事件
-        * 3.7.5 解绑事件
+            * 提供数据：StaffInfo组件发送/提供数据，调用$bus(傀儡)的$emit方法，与之绑定hello事件，并提供数据作为参数。
+            * ```
+                methods:{
+                    sendStaffName(){
+                        this.$bus.$emit('hello',this.name)
+                    }
+                }
+              ```
+        * 3.7.5 解绑事件，最好在beforeDestroy钩子中，用$off去解绑**当前组件所用到的事件。$off必须得传递当前组件用到的事件名作为参数，啥也不写的意思是绑在傀儡身上的所有事件全部解绑，会出事**
+            * ```
+                beforeDestroy(){
+                    this.$bus.off('hello')
+                }
+              ```
+        * 3.7.6 全局事件总线_TodoList案例
+            * App组件和TodoItem组件作为祖孙组件，想要在TodoItem组件把数据传递给App组件，需要App组件给子组件TodoList用props传递函数，TodoList又需要给TodoItem用props传递函数，在TodoItem中合适时调用函数并传递数据，也就是逐层传递函数。而全局事件总线适用于兄弟组件或祖孙组件间通信，相比于上面描述的传统方法简洁很多，需要在数据所在的App组件调用mounted钩子，在mounted钩子中调用全局事件总线($bus)的绑定事件的$on方法，把要绑定的事件名和事件的回调作为参数传进去。并在提供数据的TodoItem中勾选或取消勾选和删除的函数中调用全局事件总线的$emit方法，把绑定的事件名和数据作为参数传进去，即可传递相应的数据。不要忘了在App组件销毁前在beforeDestroy钩子里，解绑两个事件，真的记得要传递参数，不然全毁了
+            * ```
+                methods:{
+                    // 勾选or取消勾选一个todoItem
+                    checkTodo(id){
+                    // 遍历todos
+                    this.todos.forEach((todo)=>{
+                        // 若遍历后的todo的id等于点击的item的id，则done值取反后赋值返回
+                        if(todo.id===id) todo.done = !todo.done
+                    })
+                    },
+                    // 删除一个todo
+                    deleteTodo(id){
+                    // 过滤，其实也是遍历一下，filter不改变原数组，所以把返回值赋值给this.todos
+                    this.todos=this.todos.filter(todo=>{
+                        // 将没有点击的剩下的todo返回
+                        return todo.id !== id
+                    })
+                    },
+                }
+                // 只要App挂载，就找到全局事件总线，
+                mounted(){
+                    // 与勾选或取消勾选todo的事件绑定
+                    this.$bus.$on('checkTodo',this.checkTodo)
+                    // 与删除todo的事件绑定
+                    this.$bus.$on('deleteTodo',this.deleteTodo)
+                },
+                // 组件销毁前，
+                beforeDestroy(){
+                    // 解绑
+                    this.$bus.off(['checkTodo','deleteTodo'])
+                }
+                .......
+                methods:{
+                    handleCheck(id){
+                        // 与checkTodo事件绑定，并把数据id带过去
+                        this.$bus.$emit('checkTodo',id)
+                    },
+                    handleDelete(id){
+                        if (confirm('确定删除？')) {
+                            // 与deleteTodo事件绑定，把数据带过去
+                            this.$bus.$emit('deleteTodo',id)
+                        }
+                    }
+                }
+              ```
+            * ![在Vue开发者工具查看checkTodo和deleteTodo事件触发情况](images/全局事件总线实现checkTodo和deleteTodo事件.png)
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
 
