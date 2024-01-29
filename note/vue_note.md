@@ -2019,7 +2019,43 @@
                 }
               ```
             * ![触发FooterCount组件的checkAllTodo事件](images/触发全选事件.png)
-    * 3.7 全局事件总线
+    * 3.7 全局事件总线(GlobalEventBus)
+        * 3.7.1 理解
+            * 1. 一种组件间铜线的方式，适用于任意组件键通信
+            * 2. 安装全局事件总线
+                * ```
+                    // 创建Vue实例对象
+                    new Vue({
+                        ......
+                        beforeCreate(){
+                            // 在beforeCreate钩子里，往Vue原型对象上设置x$bus属性，x$bus的属性值就是当前Vue实例对象，表示Vue事来和任何组件实例都可以找到并使用它，$bus就是当前应用的Vue实例对象
+                            Vue.prototype.$bus=this  //安装全局事件总线
+                        },
+                        ......
+                    }).$mount('#app')
+                ```
+            * 3. 使用时间总线
+                * 3.1 接收数据：A组件向接收数据，则在A组件中给$bus绑定自定义事件，事件的回调留在A组件自身。FirmInfo组件接收数据，在FirmInfo绑定自定义事件hello，并在自身绑定事件的回调
+                    * ```
+                        mounted(){
+                            this.$bus.$on('hello',data=>{
+                                console.log('It is FirmInfo component, I got his name',data);
+                            })
+                        },
+                    ```
+                * 3.2 提供数据：StaffInfo组件发送/提供数据，调用$bus(傀儡)的$emit方法，与之绑定hello事件，并提供数据作为参数。
+                    * ```
+                        methods:{
+                            sendStaffName(){
+                                this.$bus.$emit('hello',this.name)
+                            }
+                        }
+                    ```
+            * 4. 最好在beforeDestroy钩子中，用$off去解绑**当前组件所用到的事件。$off必须得传递当前组件用到的事件名作为参数，啥也不写的意思是绑在傀儡身上的所有事件全部解绑，会出事**
+        * 3.7.2 指定事件总线对象
+        * 3.7.3 绑定事件
+        * 3.7.4 分发事件
+        * 3.7.5 解绑事件
     * 3.8 消息订阅与发布
     * 3.9 过度与动画
 
