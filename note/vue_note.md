@@ -2108,6 +2108,63 @@
                 }
               ```
             * ![在Vue开发者工具查看checkTodo和deleteTodo事件触发情况](images/全局事件总线实现checkTodo和deleteTodo事件.png)
+        * 3.7.7 nextTick
+            * 1. 语法：this.$nextTick(callback)
+            * 2. 作用：在下一次DOM更新结束后执行其指定的回调
+            * 3. 什么时候用？当改变数据后，要基于更新后的新DOM进行某些操作时，要在nextTick所指定的回调函数中执行，注：回调函数需要写成普通函数，写成箭头函数this的指向会变。案例要求：给每个todoItem添加编辑按钮，当点击编辑按钮时，todoItem文本变成input输入框，在输入框中可修改todoItem的name属性值，并且修改后输入框失去焦点，输入框就变为文本状态，还把修改的内容展示出来
+            * 代码解析：给展示文本内容的span标签和新添加的input标签添加v-show属性，span的v-show属性的值为!todo.isEditing，input的v-show属性的值为todo.isEditing，表示两个标签只能出现一个，他俩是互斥的标签，有我没他的那种，除了v-show属性，还要绑定blur事件，为其绑定handleBlur事件函数传递todo和$event作为参数用来给App组件传递数据，还要打个ref标识，绑定inputTitle，它用于让输入框默认获取焦点。又给新添加的编辑button添加v-show属性，其值也是!todo.isEditing，也是和input输入框相斥的标签，点击编辑button时，需要触发是否编辑的事件函数handleEdit。给handleEdit函数传递数据todo，在函数中判断，若todo身上有isEditing属性，表示是编辑状态，就把isEditing的属性值改为true，否则，向todo中添加isEditing属性，并将其值设置为true，这一步骤是数据代理，将isEditing设置成响应式数据；调用$nextTick方法，在$nextTick指定的函数中，调用input打ref标识的inputTitle的focus方法，当点击编辑button时，使出现的input框默认获取焦点，在$nextTick所指定的回调在所有的节点更新完毕后，重新解析模板，这样指定的input失去焦点后会回到span文本的状态，而不是僵在input输入框的状态。在handleBlur函数中会传递两个参数todo和event，在函数内，通知App组件input失去焦点时，变成span文本状态，把todo.isEditing的值改为false，也需要给input一个限制，内容不能为空，并且要用全局事件总线的$emit方法绑定updateTodo事件，传递todo.id和event.target.value做参数，作为传给App的数据。在展示数据的App组件的mounted钩子里，调用全局事件总线的$on方法，与更新一个todo状态的事件updateTodo事件绑定，在此将回调函数写成箭头函数并作为参数传进去，最后在组件销毁前，调用全局事件总线的$off方法，与updateTodo事件解绑。
+            * ```
+                <span v-show="!todo.isEditing">{{todo.name}}</span>
+                <input 
+                    type="text" 
+                    v-show="todo.isEditing" 
+                    :value="todo.name" 
+                    @blur="handleBlur(todo,$event)"
+                    ref="inputTitle"
+                >
+                <button v-show="!todo.isEditing" class="btn btn-safe" @click="handleEdit(todo)">编辑</button>
+                ...
+                methods:{
+                    handleEdit(todo){
+                        // 若todo身上有isEditing属性
+                        if(todo.hasOwnProperty.call('isEditing')){
+                            // 通知App组件编辑todo.isEditing，若isEditing值为true，就是编辑状态，变成input输入框
+                            todo.isEditing=true
+                        }else{
+                            console.log('isEditing property is not exist');
+                            // 若todo身上没有isEditing属性，则调用$set方法，向todo中添加isEditing属性，其初始值为true
+                            this.$set(todo,'isEditing',true)
+                        }
+                        // $nextTick所指定的回调会在DOM节点更新完毕后再执行，并重新解析模板，以减少浏览器的负担
+                        this.$nextTick(function () {
+                            // 给input打标识，绑定inputTitle事件，给事件调用focus方法，让输入框默认获取焦点
+                            this.$refs.inputTitle.focus()
+                        })
+                    },
+                    handleBlur(todo,event){
+                        // 该函数内通知App组件失去焦点时，把input输入框改为文本形式，将isEditing值改为false
+                        todo.isEditing=false
+                        // console.log('updateTodo',todo.id,event.target.value);  //updateTodo rqb3uewEQSF26LrvKzf5g 吃饭111
+                        // 若输入的东西为空，则提示
+                        if(!event.target.value.trim()) return alert('写点东西吧')
+                        this.$bus.$emit('updateTodo',todo.id,event.target.value)
+                    }
+                }
+                ....App
+                mounted(){
+                    // 与更新一个todo状态的事件绑定
+                    this.$bus.$on('updateTodo',(id,name)=>{
+                        // 遍历todos
+                        this.todos.forEach((todo)=>{
+                            // 若遍历后的todo的id等于点击的item的id，则将todo.name值改为传过来的name值
+                            if(todo.id===id) todo.name = name
+                        })
+                    })
+                },
+                beforeDestroy(){
+                    this.$bus.off('updateTodo')
+                }
+              ```
     * 3.8 消息订阅与发布
         * 3.8.1 理解
             * 因为前面下载Vue-cli的时候配置了淘宝镜像，我目前在外网，且淘宝镜像2022年就已经过期了，修改镜像改成默认的npm公共镜像即可```npm config set registry https://registry.npmjs.org/```
