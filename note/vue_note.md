@@ -1597,7 +1597,7 @@
             * 3. 第三步：启动项目
                 * npm run serve
             * 备注：
-                * 1. 如出现下载缓慢要配置npm淘宝镜像：npm config set registry https://registry.npm.taobao.org
+                * 1. 如出现下载缓慢要配置npm淘宝镜像：npm config set registry https://registry.npm.taobao.org，这仅是在国内网络环境下，且淘宝镜像在2022年已不再用，在外网用默认的npm公共镜像即可```npm config set registry https://registry.npmjs.org/```
                 * 2. Vue脚手架隐藏了所有webpack相关的配置，若想查看具体的webpack配置，要执行vue inspect > output.js，但不要妄想修改配置和固定名，导致代码无法运行的时候会想自杀。
         * 3.1.3 模板项目的结构
             * node_modules
@@ -2021,7 +2021,9 @@
             * ![触发FooterCount组件的checkAllTodo事件](images/触发全选事件.png)
     * 3.7 全局事件总线(GlobalEventBus)
         * 3.7.1 理解
-            * 1. 一种组件间通信的方式，适用于任意组件键通信
+            * 1. 一种组件间通信的方式，适用于任意组件间通信
+            * 2. 所有组件实例对象的原型对象的原型对象就是Vue的原型对象(那条重要的黄线)，所有组件实例对象都能看到Vue原型对象上的属性和方法，所以```Vue.prototype.$bus =new Vue()```是让所有的组件实例对象都能看到$bus这个属性对象的，这段代码要写在入口文件的创建Vue实例的方法里，并且还要在beforeCreate钩子中。
+            * 3. 是包含事件处理相关方法的对象(只有一个)，且所有的组件都可以得到，因为在Vue实例上
         * 3.7.2 指定事件总线对象
             * ```
                 // 创建Vue实例对象
@@ -2107,6 +2109,40 @@
               ```
             * ![在Vue开发者工具查看checkTodo和deleteTodo事件触发情况](images/全局事件总线实现checkTodo和deleteTodo事件.png)
     * 3.8 消息订阅与发布
+        * 3.8.1 理解
+            * 因为前面下载Vue-cli的时候配置了淘宝镜像，我目前在外网，且淘宝镜像2022年就已经过期了，修改镜像改成默认的npm公共镜像即可```npm config set registry https://registry.npmjs.org/```
+            * 1. 这种方式的思想与全局事件总线很相似
+            * 2. 包含以下操作：(1)订阅消息--对应绑定事件监听；(2)发布消息--分发事件；(3)取消消息订阅--解绑事件监听
+            * 3. 需要引入一个消息订阅与发布的第三方实现库：PubSubJS，因为是第三方库，有时使用时，会有一些不便，个人觉得全局事件总线挺方便的
+        * 3.8.2 使用PubSubJS
+            * 1. 在线文档：https://github.com/mroderick/PubSubJS
+            * 2. 下载：npm i -S pubsub-js
+            * 3. 相关语法：
+                * (1). 引入：import pubsub from 'pubsub-js'
+                * (2). 分发事件：const pubId=pubsub.subscribe('msgName',function(msgName,data){})
+                * (3). 发布消息，触发订阅的回调函数调用：pubsub.publish('msgName',data)
+                * (4). 取消消息的订阅：pubsub.unsubscribe(pubId)
+            * 4. TodoList案例
+                * ```
+                    // 引入pubsub
+                    import pubsub from 'pubsub-js'
+                    mounted(){
+                        // 订阅消息
+                        this.pubId=pubsub.subscribe('deleteTodo',this.deleteTodo)
+                    },
+                    beforeDestroy(){
+                        // 取消订阅
+                        pubsub.unsubscribe(this.pubId)
+                    }
+                    ....
+                    import pubsub from 'pubsub-js'
+                    methods:{
+                        handleDelete(id){
+                            // 发布消息
+                            pubsub.publish('deleteTodo',id)
+                        }
+                    }
+                  ```
     * 3.9 过度与动画
 
 
