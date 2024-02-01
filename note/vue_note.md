@@ -2201,6 +2201,31 @@
                     }
                   ```
     * 3.9 过度与动画
+        * 3.9.1 vue动画的理解
+            * 1. 操作css的transition或animation
+            * 2. vue会给目标元素添加/移除特定的class
+            * 3. 过度的相关类名
+                * (1). xxx-enter-active:指定显示的transition
+                * (2). xxx-leave-active:指定隐藏的transition
+                * (3). xxx-enter/xxx-leave-to:指定隐藏式的样式
+                * ![过渡与动画展示原理](images/Vue封装的过渡与动画图示.png)
+        * 3.9.2 基本过渡动画的编码
+            * 1. 在目标元素外包裹```<transition name="xxx">```，并配置name属性
+                * ```
+                    <transition name="hello" appear>
+                        <h1 v-show="!isShow">你好你好！！！！</h1>
+                    </transition>
+                  ```
+            * 2. 定义class样式
+                * (1). 指定过渡样式：transition
+                * (2). 指定隐藏式的样式：opacity/其他
+            * 3. 备注：若有多个元素需要过渡，则需要使用：```<transition-group>```，且每个元素都需要指定key值
+                * ```
+                    <transition-group name="hello" appear>
+                        <h1 v-show="!isShow" key="1">你好你好！！！！</h1>
+                        <h1 v-show="isShow" key="2">谷江山</h1>
+                    </transition-group>
+                  ```
 
 
 * **第四章 Vue中的ajax**
