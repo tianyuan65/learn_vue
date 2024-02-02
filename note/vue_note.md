@@ -2227,8 +2227,56 @@
                     </transition-group>
                   ```
 
-
 * **第四章 Vue中的ajax**
+    * 4.1 解决开发环境AJAX跨域问题
+        1. 方法一：在vue.config.js中添加如下配置
+            * ```
+                devServer:{
+                    proxy:"http://localhost:5000"
+                }
+              ```
+            * 说明：
+                * (1). 优点：配质简单，请求资源时直接发给前端(8080)即可
+                * (2). 缺点：不能配置多个代理，不能灵活地控制请求是否走代理
+                * (3). 工作方式：若按照上述配置代理，当请求了前端不存在的资源时，那么该请求会转发给服务器(优先匹配前端资源)
+                    * 会优先匹配前端资源，但匹配了前缀请求路径后需要在vue.config.js里的DevServer配置中添加```pathRewrite:{'^/api':''}```，pathRewrite用于匹配所有以/api开头的路径，然后将/api开头的路径变成空字符串，若不添加pathWrite这一配置，就会报错并出现下面图里的响应，就是找不到为```/api/students```的路径
+                    * ![优先匹配前端资源，但匹配了前缀请求路径](images/5000服务器里有students，但是没有api下面的students.png)
+        * 2. 方式二：编写vue.config.js配置具体代理规则
+            * ```
+                module.exports:{
+                    devServer: {
+                        proxy: {
+                            '/api1': {  //匹配所有以'/api1'开头的请求路径
+                                // 是代理目标的基础路径，向目标URL/路径(按照我写的例子，就是5000那台服务器)发送请求
+                                target: 'http://localhost:5000',
+                                // 正则的匹配条件，匹配所有以/api开头的路径，然后将/api开头的路径都给变成空字符串
+                                pathRewrite:{'^/api1':''},
+                                // ws: true,  //用于支持websocket
+                                // changeOrigin: true  //用于控制请求头中的host值
+                            },
+                            '/api2': {  //匹配所有以'/api2'开头的请求路径
+                                // 是代理目标的基础路径，向目标URL/路径(按照我写的例子，就是5001那台服务器)发送请求
+                                target: 'http://localhost:5001',
+                                // 正则的匹配条件，匹配所有以/api开头的路径，然后将/api开头的路径都给变成空字符串
+                                pathRewrite:{'^/api2':''},
+                                changeOrigin: true  //用于控制请求头中的host值
+                            },
+                        }
+                    }
+                }
+              ```
+                * changeOrigin设置为true时，服务器收到的请求头中的host为，localhost:5000，就是撒谎的时候，和服务器端口号保持一致
+                * changeOrigin设置为false时，服务器收到的请求头中的host为，localhost:8080，诚实的时候，与铅酸的端口号保持一致
+                * changeOrigin默认值为true，就是会撒谎，因为有的服务器会有访问限制和要求，这时候就需要撒一下谎。
+                * ![changeOrigin配置的值有所不同时的情况，](images/当changeOrigin的值不同时.png)
+            * 说明：
+                * (1). 优点：可以配置多个代理，且可以灵活地控制请求是否走代理，想走代理加前缀，不想走就不加
+                * (2). 缺点：配置略微繁琐，请求资源时必须加前缀
+    * 4.2 github用户搜索案例
+    * 4.3 vue项目中常用的两个ajax库
+    * 4.4 slot插槽
+
+
 * **第五章 vuex**
 * **第六章 vue-router**
 * **第七章 Vue UI组件库**
