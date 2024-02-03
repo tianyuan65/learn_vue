@@ -2273,6 +2273,85 @@
                 * (1). 优点：可以配置多个代理，且可以灵活地控制请求是否走代理，想走代理加前缀，不想走就不加
                 * (2). 缺点：配置略微繁琐，请求资源时必须加前缀
     * 4.2 github用户搜索案例
+        * 4.2.1 接口地址
+            * https://api.github.com/search/users?q=xxx
+        * 4.2.2 说明：
+            * 1. 首先，拆分静态组件，分为两个部分，搜索用户的SearchUsers组件和展示用户信息的UsersList组件。SearchUsers组件的输入框中输入关键信息，点击Search按钮，就在UsersList的区域展示有关关键信息的用户们，简单来说，就是需要组件间通信，这里是兄弟组件间通信，有全局事件总线和消息订阅与发布两种方法可以实现，在此使用全局事件总线。
+            * 2. 其次，UsersList组件是展示与关键字相关的github用户们，在SearchUsers发送get请求后获取的数据中，最重要的三个数据就是，用户昵称、用户头像信息、点击用户头像后会跳转到的用户的github主页的链接(user.login、user.avatar_url、user.html_url)。初次渲染页面时，不需要展示用户信息，所以给包裹头像的div标签添加条件渲染v-show，当info.users.length长度为0，就不展示用户信息，又用v-for遍历获取到的users，给键值对的键key赋的值是user.login。除了这些还需要设置初次渲染页面和刷新时会出现的欢迎词、点击search按钮后会出现的加载中以及当出现错误时会展示错误的内容。在data中设置佛属性，将初始化的数据房里，便于批量更新数据，设置isFirst初始值为true，isLoading初始值为false，errMsg初始值设置为空字符串，users初始值为空数组。用全局事件总线实现组件间通信，在mounted钩子中，调用$bus的$on方法，绑定updateListData事件，并调用其回调函数，回调函数中需要将更新了的数据替换掉自己原先的初始值，留着没修改的那个(就是isFirst，它也就初次渲染和刷新页面的时候用一下，其他的时候不动)，把这两个进行合并，重名的属性，以更新了的值为主(dataObj里的值)。
+                * ```
+                    <div class="row">
+                        <!-- 展示用户列表 -->
+                        <!-- 条件渲染v-show,users.length长度为0，就不展示;遍历users数据，给键值对的键key赋的值是user.login -->
+                        <div v-show="info.users.length" class="card" v-for="user in info.users" :key="user.login">
+                        <!-- 点击用户头像的话，跳转到user.html_url中 -->
+                        <a :href="user.html_url" target="_blank">
+                            <!-- 用户的头像是user.avatar_url -->
+                            <img :src="user.avatar_url" style='width: 100px'/>
+                        </a>
+                        <p class="card-text">{{user.login}}</p>
+                        </div>
+                        <!-- 展示欢迎词 -->
+                        <h1 v-show="info.isFirst">Welcolme to use!</h1>
+                        <!-- 展示加载中 -->
+                        <h1 v-show="info.isLoading">Loading.....</h1>
+                        <!-- 展示错误 -->
+                        <h1 v-show="info.errMsg">An error occurred with the request,error on {{info.errMsg}}</h1>
+                    </div>
+                    ...
+                    data(){
+                        return {
+                            // 加一层，把初始化的数据放里，便于批量更新数据
+                            info:{
+                                isFirst:true,  // 是否为初次展示，初始值为true
+                                isLoading:false,  // 是否处于加载中，初始值为false，因为刚展示页面啥都没写，也没点search按钮，咋可能在加载
+                                errMsg:'',  // 错误信息放这里
+                                users:[],  //数据
+                            }
+                        }
+                    },
+                    mounted(){
+                        this.$bus.$on('updateListData',dataObj=>{
+                            console.log('It is UsersList component, got the data:',dataObj);
+                            // 用更新了的三个值替换掉自己原先的初始值，也留着没修改的那个，合并一下，重名的属性，以dataObj的为主；没有的原来是什么样还是什么样
+                            this.info={...this.info,...dataObj}
+                        })
+                    }
+                  ```
+                * ![向github发送请求前和成功请求后info属性里那些设置的值的变化](images/向github服务器请求前和请求成功后.png)
+            * 3. 再次，写SearchUsers组件，SearchUsers中的data里初始化一个属性keyWord，设置其初始值为空字符串，keyWord是用于给github服务器发送请求时用户输入的那个关键字，所以与input用v-model进行双向数据绑定。给button绑定叫searchUsers单击事件的回调函数，在函数中，在正式发送请求前更新写在UsersList组件里的初始化的数据，isFirst变为false，isLoading变为true，errMsg依然是空字符串，users依旧是空数组。引入axios，调用其get方法获取数据，接口地址上面有，但关键字的部分需要用模板字符串的形式，获取到的数据需要用then方法进行解析，then方法的value回调函数中，调用$bus的$emit方法，与updateListData事件进行绑定，因为value回调函数是请求成功时才会调用的回调，所以，此时需要isLoading值变为false，errMsg依然是空字符串，users属性值不再是空数组，将用关键字获取的用户数据填进去；但若请求失败的话，还是调用$bus的$emit方法，与updateListData事件绑定，将isLoading值改为false，errMsg此时的值为错误的信息，users需要清空为空数组。
+                * ```
+                    <section class="jumbotron">
+                        <h3 class="jumbotron-heading">Search Github Users</h3>
+                        <div>
+                            <input type="text" placeholder="enter the name you search" v-model="keyWord"/>&nbsp;
+                            <button @click="searchUsers">Search</button>
+                        </div>
+                    </section>
+                    ...
+                    data(){
+                        return {
+                        keyWord:''
+                        }
+                    },
+                    methods:{
+                        searchUsers(){
+                            this.$bus.$emit('updateListData',{isFirst:false,isLoading:true,errMsg:'',users:[]})
+                            axios.get(`https://api.github.com/search/users?q=${this.keyWord}`).then(
+                                value=>{
+                                // 请求成功后，isFirst的值只有在刚渲染页面或刷新页面时才是true，之后一直是false，所以在此不专门写isFirst了；isLoading值又变为false；errMsg依旧空；users填入数据
+                                this.$bus.$emit('updateListData',{isLoading:false,errMsg:'',users:value.data.items})
+                                },
+                                error=>{
+                                console.log('failed to request',error.message);
+                                // 请求失败后，isLoading依旧false；errMsg的值为错误的信息；users清空，成空数组
+                                this.$bus.$emit('updateListData',{isLoading:false,errMsg:error.message,users:[]})
+                                }
+                            )
+                        }
+                    },
+                  ```
+                * ![输入test关键字，成功发送get请求并获取、展示用户数据](images/输入test，成功获取数据.png)
+                * ![断网时给展示的出错的具体信息](images/断网时报的错.png)
     * 4.3 vue项目中常用的两个ajax库
     * 4.4 slot插槽
 
