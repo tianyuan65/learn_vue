@@ -2352,7 +2352,13 @@
                   ```
                 * ![输入test关键字，成功发送get请求并获取、展示用户数据](images/输入test，成功获取数据.png)
                 * ![断网时给展示的出错的具体信息](images/断网时报的错.png)
+            * 4. 最后，在App子组件，引入SearchUsers和UsersList组件，并注册，最后的最后写组件标签
     * 4.3 vue项目中常用的两个ajax库
+        * 4.3.1 axios
+            * 通用的Ajax请求库，官方推荐，使用广泛
+        * 4.3.2 vue-resource
+            * vue插件库，vue 1.x使用广泛，官方已不维护
+            * 用法：npm i vue-resource安装vue-resource插件，在入口文件引入vue-resource插件，并调用Vue的use方法，作为参数传递使用插件。到发送请求的组件SearchUsers中，查看输出this指向可知，输出的VueComponent实例对象中有一个$http函数，它就是可以代替axios的，在此不引入使用axios来发送请求、获取数据，调用this.$http的get方法来发送请求和获取数据，效果是一样的。但目前使用并不广泛，同样是需要引入的axios更方便和广泛，并且官方也更推荐。
     * 4.4 slot插槽
 
 
