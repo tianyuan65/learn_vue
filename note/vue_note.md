@@ -2360,6 +2360,101 @@
             * vue插件库，vue 1.x使用广泛，官方已不维护
             * 用法：npm i vue-resource安装vue-resource插件，在入口文件引入vue-resource插件，并调用Vue的use方法，作为参数传递使用插件。到发送请求的组件SearchUsers中，查看输出this指向可知，输出的VueComponent实例对象中有一个$http函数，它就是可以代替axios的，在此不引入使用axios来发送请求、获取数据，调用this.$http的get方法来发送请求和获取数据，效果是一样的。但目前使用并不广泛，同样是需要引入的axios更方便和广泛，并且官方也更推荐。
     * 4.4 slot插槽
+        * 4.4.1 理解
+            * 父组件向子组件传递带数据的标签，当一个组件不确定结构时，就需要使用slot技术，注意：插槽内容是在父组件中编译后，再传递给子组件的
+        * 4.4.2 分类
+            * 1. 默认插槽
+                * ```
+                    父组件中：
+                    <EntertainmentCategory>
+                        <img src="https://img1.baidu.com/it/u=4097841643,3109051827&fm=253&fmt=auto&app=138&f=JPEG?w=667&h=500" alt="">
+                    </EntertainmentCategory>
+                    子组件中：
+                    <template>
+                        <div>
+                            <!-- 定义插槽 -->
+                            <slot>slot's default content.</slot>
+                        </div>
+                    </template>
+                  ```
+                * ![html结构里没有传递具体内容就会出现写在slot的默认内容](images/slot插槽，组件标签内没有传递具体内容就会出现写在slot标签里的内容.png)
+            * 2. 命名/具名插槽，若一个组件架构当中，出现了多个插槽，就需要给每个插槽定义独一无二的名称
+                * ```
+                    父组件中：
+                    <EntertainmentCategory>
+                        <template slot="center">
+                            <img slot="center" src="https://img1.baidu.com/it/u=4097841643,3109051827&fm=253&fmt=auto&app=138&f=JPEG?w=667&h=500" alt="">
+                        </template>
+
+                        <template v-slot:footer>
+                           <a slot="footer" href="http://www.baidu.com">更多美食</a>
+                        </template>
+                    </EntertainmentCategory>
+
+                    <EntertainmentCategory>
+                        <template slot="center">
+                            <video slot="center" controls src="http://www.baidu.com/link?url=oFgYRA8d0VKF7hKi-oWuKbx-PjgmTrPb7CUN15Qn-ddpdvviGR1D6GHCrekpKWAvXEcGkEURjAr-llqy5p-dGq"></video>
+                        </template>
+
+                        <template v-slot:footer>
+                            <div class="foot">
+                                <a href="http://www.baidu.com">经典</a>
+                                <a href="http://www.baidu.com">热门</a>
+                                <a href="http://www.baidu.com">推荐</a>
+                            </div>
+                            <h4 class="foot">欢迎影迷前来观看</h4>
+                        </template>
+                    </EntertainmentCategory>
+                    子组件中：
+                    <template>
+                        <div>
+                            <!-- 定义插槽 -->
+                            <slot name="center">slot's default content1.</slot>
+                            <slot name="footer">slot's default content2.</slot>
+                        </div>
+                    </template>
+                  ```
+            * 3. 作用域插槽
+                * 理解：数据在组件自身，但根据数据生成的机构需要组件的使用者来决定(games数据在EntertainmentCategory组件中，但使用数据所遍历出来的结构由App组件决定)
+                * ```
+                    父组件中：
+                    <EntertainmentCategory>
+                        <template scope="play">
+                            <!-- 生成的是ul列表 -->
+                            <ul>
+                                <li v-for="(game,index) in play.games" :key="index">{{game}}</li>
+                            </ul>
+                        </template>
+                    </EntertainmentCategory>
+
+                    <EntertainmentCategory>
+                        <template slot-scope={games}>
+                            <!-- 生成的是h4列表 -->
+                            <h4 v-for="(game,index) in games" :key="index">{{game}}</h4>
+                        </template>
+                    </EntertainmentCategory>
+                    子组件中：
+                    <template>
+                        <div>
+                            <!-- 定义插槽 -->
+                            <slot :games="games">slot's default content1.</slot>
+                        </div>
+                    </template>
+
+                    <script>
+                        export default {
+                            name:'EntertainmentCategory',
+                            props:['title'],
+                            // 数据在子组件自身
+                            data() {
+                                return {
+                                    games:['光与夜之恋','未定事件簿','恋与制作人','和平精英'],
+                                }
+                            },
+                        }
+                    </script>
+                  ```
+                * ![在子组件把数据传递给插槽的使用者，在App的组件标签里用添加scope或slot-scope属性，并声明接收数据](images/scope的名称play就是传递给插槽的使用者的数据.png)
 
 
 * **第五章 vuex**
@@ -2386,5 +2481,7 @@
     * element.focus()，点击button后就获取了焦点，但初次进入页面时没有，原因是因为再次点击时，依赖数据发生变化，模板再次解析，就会触发写的焦点，vue解析的时候fbind已经执行数据可以绑定但是真实dom还没有渲染到页面也就是focus执行了也找不到
     * 所有指令相关的函数里的this，不指向Vue实例，指向Window，因为不需要Vue实例相关的资源。自定义指令操作DOM，this是window反而更好维护，这里有个好理解的方式，就是我们操作了dom，其实只有window下才能操作dom
     * 都是通过VUE创建的实例。但是工作重点不一样。vm是全局管理。其他是组件的管理。vm直接管理组件的加载和删除。组件管理和页面的交互。搭积木玩过没，组件就是一个个积木，整个项目就是一个个积木搭起来的
+    * 默认插槽与具名插槽：根据父组件的数据生成结构传递给子组件
+    * 作用域插槽：父组件根据子组件传递的数据生成dom然后传递给子组件
     
     
