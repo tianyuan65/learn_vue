@@ -2456,8 +2456,119 @@
                   ```
                 * ![在子组件把数据传递给插槽的使用者，在App的组件标签里用添加scope或slot-scope属性，并声明接收数据](images/scope的名称play就是传递给插槽的使用者的数据.png)
 
-
 * **第五章 vuex**
+    * 5.1 理解vuex
+        * 5.1.1 vuex是什么？
+            * 1. 概念：专门在Vue中实现集中式状态(数据)管理的一个Vue插件，对vue应用中多个组件的**共享**状态进行集中式的管理(读/写)，也是一种组件间通信的方式，且适用于任意组件间通信。参考redux的作用
+            * 2. GitHub地址：https://github.com/vuejs/vuex
+        * 5.1.2 什么时候使用Vuex
+            * 1. 多个组件依赖于同一状态/数据。
+            * 2. 来自不同组件的行为需要变更同一状态/数据，翻译：A组件里点击按钮，使每次点击后x+1，B组件里，鼠标滑过B组件时，x大10倍的这些行为就是变更保存在vuex的同一状态/数据。
+        * 5.1.3 案例
+        * 5.1.4 Vuex工作原理图
+            * ![vuex原理图](images/vuex原理图.png)
+    * 5.2 vuex核心概念和API
+        * 5.2.1 state(相当于饭店里的菜)
+            * 1. vuex管理的状态对象，也就是数据
+            * 2. 它应该是唯一的
+            * 3. ```
+                    const state={
+                        xxx:initValue
+                    }
+                 ```
+        * 5.2.2 actions(相当于服务员)
+            * 1. 值为一个对象，包含多个响应用户动作的回调函数
+            * 2. 通过commit()来出发mutation中函数的调用，间接更新state
+            * 3. 如何触发actions中的回调？
+                * 在组件中使用```$store.dispatch('对应的action回调名')```触发
+            * 4. 可以包含异步代码(定时器，ajax等)
+            * 5. ```
+                    const actions={
+                        zzz({commit,state},data1){
+                            commit('yyy',{data1})
+                        }
+                    }
+                 ```
+        * 5.2.3 mutations(相当于厨师)
+            * 1. 值是一个对象，包含多个直接更新state的方法
+            * 2. 谁能调用mutations中的方法？如何调用？
+                * 在action中使用：```commit('对应的mutations方法名')```触发
+            * 3. mutations中方法的特点：不能写异步代码、只能单纯地操作state
+            * 4. ```
+                    const mutations={
+                        yyy(state,{data1}){
+                            // 更新state的某个属性
+                        }
+                    }
+                 ```
+        * 5.2.4 创建统一管理这三个重要核心概念的store的步骤：
+            * 1. 安装vuex：npm i vuex
+            * 2. 使用vuex插件：Vue.use(vuex)
+            * 3. 创建store
+            * 4. 让所有的组件实例对象都看得到store
+            * 3和4就是搭建vuex环境
+                * (1). 创建文件：src/store/index.js
+                    * ```
+                        // 该文件用于创建vuex中最为核心的store
+                        // 引入vue
+                        import Vue from "vue"
+                        // 引入Vuex
+                        import Vuex from "vuex"
+                        // 引入Vue和Vuex后立马，在创建store实例前，使用Vuex插件
+                        Vue.use(Vuex)
+                        // 第一步：定义actions--用于响应组件中的动作
+                        const actions={}
+                        // 第一步：定义mutations--用于操作/加工数据(state)
+                        const mutations={}
+                        // 第一步：定义state--用于存储初始化的数据
+                        const state={}
+
+                        // 通过实例化Vuex中的Store构造函数，创建并暴露/导出store
+                        // 这是简写的，方便干净
+                        export default new Vuex.Store({
+                            // 添加配置项actions、mutations、state
+                            // actions:actions,  //可简写
+                            actions,
+                            // mutations:mutations,  //可简写
+                            mutations,
+                            // state:state  //可简写
+                            state,
+                        })
+                      ```
+                * (2). 在入口文件main.js中创建Vue实例对象时传入store配置项
+                    * ```
+                        ...
+                        // 引入刚创建并暴露了的store
+                        import store from "./store";
+                        ...
+                        // 创建Vue实例对象
+                        new Vue({
+                            render:h=>h(App),
+                            // 配置项名:引入的store，当然也可以简写
+                            // store:store,
+                            store,
+                            beforeCreate(){
+                                Vue.prototype.$bus=this
+                            }
+                        }).$mount('#app')
+                      ```
+        * 5.2.5 getters()
+            * 1. 值为一个对象，包含多个用于返回数据的函数
+            * 2. 如何使用？```$store.getters.xxx```
+            * 3. ```
+                    const getters={
+                        mmm(state){
+                            return satte.msg + '!'
+                        }
+                    }
+                 ```
+        * 5.2.6 modules()
+            * 1. 包含多个module
+            * 2. 一个module是一个store配置对象
+            * 3. 与一个组件(包含有共享数据)对应
+        * 简单来说，Vue Component是客户，将需求(想吃的菜)用dispatch方法(点菜)告诉服务员actions，actions拿到需求后，调用commit方法，将需求告诉厨师mutations，在mutations对数据/状态，就是state进行更新修改(做菜)。但有时Vue Component会跳过actions，直接向mutations提需求，前提是mutations中的操作是同步的，并且不需要额外的异步处理时会省略actions，因为mutations只单纯地操作处理state。也有不得不使用actions的时候，那就是处理异步操作的时候，就是需要发送HTTP请求，从外部数据库(backend api)获取数据，需要actions来处理这些操作，来保证组件保持干净，除了异步操作，在管理复杂的状态和在一个操作里提交多个mutations时，actions会帮助组织这些mutations提交，以便于能更容易理解和调试这些逻辑。actions、mutations、state都是一个一个的普通的对象，区别就是state存放的是数据/状态，mutations里会存放更新state的函数，actions存放多个响应用户动作的回调函数，这三个对象，也是vuex的组成部分，统一归store(餐厅老板)管理，没有store，餐厅也干不下去。因为Vue Component向actions提需求的时候，就是通过调用dispatch方法来提的，这个dispatch方法不是window提供的而是store提供的，调用触发actions中的回调的时候也是```$store.dispatch('对应action回调名')```
+        
+
 * **第六章 vue-router**
 * **第七章 Vue UI组件库**
 
@@ -2483,5 +2594,6 @@
     * 都是通过VUE创建的实例。但是工作重点不一样。vm是全局管理。其他是组件的管理。vm直接管理组件的加载和删除。组件管理和页面的交互。搭积木玩过没，组件就是一个个积木，整个项目就是一个个积木搭起来的
     * 默认插槽与具名插槽：根据父组件的数据生成结构传递给子组件
     * 作用域插槽：父组件根据子组件传递的数据生成dom然后传递给子组件
+    * actions对象存放所有动作
     
     
