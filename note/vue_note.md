@@ -2652,14 +2652,21 @@
                   ```
                 * ![图示：函数们依次响应](images/处理复杂业务逻辑时，可以反复调用context的dispatch.png)
         * 5.2.5 getters()
-            * 1. 值为一个对象，包含多个用于返回数据的函数
-            * 2. 如何使用？```$store.getters.xxx```
+            * 1. 概念：当state中的数据需要经过加工后再使用时，可以使用getters加工。值为一个对象，包含多个用于返回数据的函数。
+            * 2. 如何使用？```$store.getters.xxx```，xxx为在store.js中的getters配置中创建的函数名，在组建中读取数据时这么写
             * 3. ```
+                    // 定义getters--用于将state中的数据进行加工
                     const getters={
-                        mmm(state){
-                            return satte.msg + '!'
+                        // 表示大10倍的这个函数接收参数state
+                        bigSum(state){
+                            return state.sum*10
                         }
                     }
+                    // 创建并暴露store
+                    export default new Vuex.Store({
+                        ......
+                        getters
+                    })
                  ```
         * 5.2.6 modules()
             * 1. 包含多个module
@@ -2697,3 +2704,4 @@
     * actions对象存放所有动作
     * 先简单理解:actions:响应组件动作，mutation:操作state数据，state:保存共享数据
     * 服务员可以有多个，一个负责点菜-plusOdd，一个负责传菜-demo1，一个负责上菜-demo2。plusOdd中业务逻辑过于复杂，可以调用上下文context的dispatch方法，将处理复杂业务逻辑的函数名demo1和value作为参数传递进去，demo1中若还是无法处理复杂业务的话，继续调用context的dispatch方法，方式和上一次一样，将demo2和value作为参数传递，最终在demo2中处理。
+    * 可以看出，state配置项和getters配置项的关系就像Vue里的data和computed。state就像数据源，getters可以根据state将数据进行进一步加工
