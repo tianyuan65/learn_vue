@@ -2552,6 +2552,105 @@
                             }
                         }).$mount('#app')
                       ```
+            * 5. 基本使用
+                * (1). 初始化数据，配置actions和mutations，操作文件store.js
+                    * ```
+                        // 该文件用于创建vuex中最为核心的store
+                        // 引入vue
+                        import Vue from "vue"
+                        // 引入Vuex
+                        import Vuex from "vuex"
+                        // 引入Vue和Vuex后立马，在创建store实例前，使用Vuex插件
+                        Vue.use(Vuex)
+                        // 第一步：定义actions--用于响应组件中的动作
+                        const actions={
+                            // 组件中调用$store的dispatch方法后，调用该函数，函数内传递两个参数，
+                            // 第一个参数是上下文对象；第二个是要加的数值就是组件里定的selectNum
+                            // plus(context,value){
+                            //     console.log('plus function in actions is called');
+                            //     // 调用context的commit方法，传递两个参数，第一个是会调用的mutations里的函数名，推荐大写，第二个是加多少的数值就是组件里定的selectNum
+                            //     // 函数名大写是为了区分，大写就是mutations里的函数，小写的话就是actions里的函数
+                            //     context.commit('PLUS',value)
+                            // },
+                            // minus(context,value){
+                            //     console.log('minus function in actions is called');
+                            //     context.commit('MINUS',value)
+                            // },
+                            plusOdd(context,value){
+                                console.log('plusOdd function in actions is called');
+                                // 上下文里的state是奇数时才提交PLUSODD函数，这不判断的操作并不在mutations进行，mutations只是单纯地操作数据，在actions才进行判断、异步操作等
+                                if (context.state.sum % 2) {
+                                    context.commit('PLUSODD',value)
+                                }
+                            },
+                            asyncPlus(context,value){
+                                console.log('asyncPlus function in actions is called');
+                                setTimeout(() => {
+                                    context.commit('ASYNCPLUS',value)
+                                }, 500);
+                            }
+                        }
+                        // 第一步：定义mutations--用于操作/加工数据(state)
+                        const mutations={
+                            // 还是传递两个参数，第一个是sum，也就是state，这是为了监测数据的变化；第二个是要加的数值就是组件里定的selectNum
+                            PLUS(state,value){
+                                // 更新数据
+                                state.sum +=value
+                                console.log('PLUS function in mutations is called');
+                            },
+                            MINUS(state,value){
+                                // 更新数据
+                                state.sum -= value
+                                console.log('MUNIS function in mutations is called');
+                            },
+                            PLUSODD(state,value){
+                                // 更新数据
+                                state.sum += value
+                            },
+                            ASYNCPLUS(state,value){
+                                // 更新数据
+                                state.sum += value
+                            },
+                        }
+                        // 第一步：定义state--用于存储初始化的数据
+                        const state={
+                            sum:0  //当前和
+                        }
+
+                        // 通过实例化Vuex中的Store构造函数，创建并暴露/导出store
+                        // 这是简写的，方便干净
+                        export default new Vuex.Store({
+                            // 添加配置项actions、mutations、state
+                            // actions:actions,  //可简写
+                            actions,
+                            // mutations:mutations,  //可简写
+                            mutations,
+                            // state:state  //可简写
+                            state,
+                        })
+                      ```
+                * (2). 组件中读取vuex中的数据：$store.state.sum
+                * (3). 组件中修改vuex中的数据：$store.dispatch('actions中的方法名',value)或$store.commit('mutations中的方法名-一般是全大写的',value)
+                * 备注：若无网络请求或其他业务逻辑，组件中也可以越过actions，即组件当中不写dispatch，直接编写commit
+                * 扩展1：若有复杂业务时，或者当前context里无法找到数据state时，需要责任链式方法(个人理解)来解决。例如，plusOdd中业务逻辑过于复杂，可以调用上下文context的dispatch方法，将处理复杂业务逻辑的函数名demo1和value作为参数传递进去，demo1中若还是无法处理复杂业务的话，继续调用context的dispatch方法，方式和上一次一样，将demo2和value作为参数传递，最终在demo2中处理。
+                * ```
+                    plusOdd(context,value){
+                        console.log('plusOdd function in actions is called');
+                        console.log('dealt with some things--plusOdd');
+                        context.dispatch('demo1',value)
+                    },
+                    demo1(context,value){
+                        console.log('dealt with some things--demo1');
+                        context.dispatch('demo2',value)
+                    },
+                    demo2(context,value){
+                        console.log('dealt with some things--demo2');
+                        if (context.state.sum % 2) {
+                            context.commit('PLUSODD',value)
+                        }
+                    },
+                  ```
+                * ![图示：函数们依次响应](images/处理复杂业务逻辑时，可以反复调用context的dispatch.png)
         * 5.2.5 getters()
             * 1. 值为一个对象，包含多个用于返回数据的函数
             * 2. 如何使用？```$store.getters.xxx```
@@ -2567,6 +2666,7 @@
             * 2. 一个module是一个store配置对象
             * 3. 与一个组件(包含有共享数据)对应
         * 简单来说，Vue Component是客户，将需求(想吃的菜)用dispatch方法(点菜)告诉服务员actions，actions拿到需求后，调用commit方法，将需求告诉厨师mutations，在mutations对数据/状态，就是state进行更新修改(做菜)。但有时Vue Component会跳过actions，直接向mutations提需求，前提是mutations中的操作是同步的，并且不需要额外的异步处理时会省略actions，因为mutations只单纯地操作处理state。也有不得不使用actions的时候，那就是处理异步操作的时候，就是需要发送HTTP请求，从外部数据库(backend api)获取数据，需要actions来处理这些操作，来保证组件保持干净，除了异步操作，在管理复杂的状态和在一个操作里提交多个mutations时，actions会帮助组织这些mutations提交，以便于能更容易理解和调试这些逻辑。actions、mutations、state都是一个一个的普通的对象，区别就是state存放的是数据/状态，mutations里会存放更新state的函数，actions存放多个响应用户动作的回调函数，这三个对象，也是vuex的组成部分，统一归store(餐厅老板)管理，没有store，餐厅也干不下去。因为Vue Component向actions提需求的时候，就是通过调用dispatch方法来提的，这个dispatch方法不是window提供的而是store提供的，调用触发actions中的回调的时候也是```$store.dispatch('对应action回调名')```
+        
         
 
 * **第六章 vue-router**
@@ -2595,5 +2695,5 @@
     * 默认插槽与具名插槽：根据父组件的数据生成结构传递给子组件
     * 作用域插槽：父组件根据子组件传递的数据生成dom然后传递给子组件
     * actions对象存放所有动作
-    
-    
+    * 先简单理解:actions:响应组件动作，mutation:操作state数据，state:保存共享数据
+    * 服务员可以有多个，一个负责点菜-plusOdd，一个负责传菜-demo1，一个负责上菜-demo2。plusOdd中业务逻辑过于复杂，可以调用上下文context的dispatch方法，将处理复杂业务逻辑的函数名demo1和value作为参数传递进去，demo1中若还是无法处理复杂业务的话，继续调用context的dispatch方法，方式和上一次一样，将demo2和value作为参数传递，最终在demo2中处理。
