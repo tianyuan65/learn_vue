@@ -2691,6 +2691,7 @@
                     // 借助mapGetters生成计算属性，从getters中读取数据，数组写法
                     ...mapGetters(['bigSum'])
                   ```
+                * ![通过map方法映射并读取state和getters中的数据为计算属性](images/mapState和mapGetters方法.png)
             * 3. mapActions方法：
             * 4. mapMutations方法：
             
