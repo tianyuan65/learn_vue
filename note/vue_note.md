@@ -2692,8 +2692,26 @@
                     ...mapGetters(['bigSum'])
                   ```
                 * ![通过map方法映射并读取state和getters中的数据为计算属性](images/mapState和mapGetters方法.png)
-            * 3. mapActions方法：
-            * 4. mapMutations方法：
+            * 3. mapActions方法：用于帮助我们生成与actions对话的方法，即：包含```$store.dispatch(xxx)```的函数
+                * ```
+                    methods:{
+                        // 对象写法，借助mapMutations，生成对应的方法，方法中会调用commit去联系mutations
+                        ...mapMutations({increment:'PLUS',decrement:'MINUS'}),
+                        // 数组写法，借助mapMutations，生成对应的方法，方法中会调用commit去联系mutations
+                        // 但数组写法需要保证函数名和从mutations里读取的函数名一致，所以与click事件绑定的函数名需要改，对象方法不用
+                        // ...mapMutations(['PLUS','MINUS']),
+                            }
+                  ```
+            * 4. mapMutations方法：用于帮助我们生成与mutations对话的方法，即：包含```$store.commit(xxx)```的函数
+                * ```
+                    methods:{
+                        // 对象写法，借助mapActions，生成对应的方法，方法中调用dispatch去联系actions，然后就是按流程来，记得给时间函数传参selectNum
+                        ...mapActions({incrementOdd:'plusOdd',asyncIncrement:'asyncPlus'}),
+                        // 数组写法，借助mapActions，生成对应的方法，方法中调用dispatch去联系actions，然后就是按流程来，记得给时间函数传参selectNum
+                        // ...mapActions(['plusOdd','asyncPlus'])
+                    }
+                  ```
+            * 备注：mapActions和mapMutations使用时，若需要传递参数，需要在模板中绑定事件时传递好参数，柔则参数是事件对象event
             
         
         
