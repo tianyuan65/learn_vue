@@ -2673,6 +2673,27 @@
             * 2. 一个module是一个store配置对象
             * 3. 与一个组件(包含有共享数据)对应
         * 简单来说，Vue Component是客户，将需求(想吃的菜)用dispatch方法(点菜)告诉服务员actions，actions拿到需求后，调用commit方法，将需求告诉厨师mutations，在mutations对数据/状态，就是state进行更新修改(做菜)。但有时Vue Component会跳过actions，直接向mutations提需求，前提是mutations中的操作是同步的，并且不需要额外的异步处理时会省略actions，因为mutations只单纯地操作处理state。也有不得不使用actions的时候，那就是处理异步操作的时候，就是需要发送HTTP请求，从外部数据库(backend api)获取数据，需要actions来处理这些操作，来保证组件保持干净，除了异步操作，在管理复杂的状态和在一个操作里提交多个mutations时，actions会帮助组织这些mutations提交，以便于能更容易理解和调试这些逻辑。actions、mutations、state都是一个一个的普通的对象，区别就是state存放的是数据/状态，mutations里会存放更新state的函数，actions存放多个响应用户动作的回调函数，这三个对象，也是vuex的组成部分，统一归store(餐厅老板)管理，没有store，餐厅也干不下去。因为Vue Component向actions提需求的时候，就是通过调用dispatch方法来提的，这个dispatch方法不是window提供的而是store提供的，调用触发actions中的回调的时候也是```$store.dispatch('对应action回调名')```
+        * 5.2.7 四个map方法的使用：
+            * 1. mapState方法：用于帮助我们映射state中的数据为计算属性，就是方便从state中读取数据
+                * ```
+                    computed:{
+                        // 借助mapState生成计算属性，从state中读取数据（对象写法：用扩展运算符，将状态映射依次展开到计算属性当中）
+                        ...mapState({sum:'sum',staff:'staff',firm:'firm'}),
+                        // 借助mapState生成计算属性，从state中读取数据（数组写法：也是用扩展运算符麻酱状态映射到计算属性中）
+                        // 注意点：若想用数组写法实现，就要保证生成的计算属性名和$store.state里读取出来的数据名一致
+                        ...mapState(['sum','staff','firm']),
+                    }
+                  ```
+            * 2. mapGetters方法：用于帮助我们映射getters中的数据为计算属性，就是方便从getters中读取数据
+                * ```
+                    // 借助mapGetters生成计算属性，从getters中读取数据，对象写法
+                    ...mapGetters({bigSum:'bigSum'}),
+                    // 借助mapGetters生成计算属性，从getters中读取数据，数组写法
+                    ...mapGetters(['bigSum'])
+                  ```
+            * 3. mapActions方法：
+            * 4. mapMutations方法：
+            
         
         
 
