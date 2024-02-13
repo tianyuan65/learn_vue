@@ -2712,7 +2712,33 @@
                     }
                   ```
             * 备注：mapActions和mapMutations使用时，若需要传递参数，需要在模板中绑定事件时传递好参数，柔则参数是事件对象event
-            
+        * 5.2.8 求和组件和人员列表组件共享数据案例
+            * ```
+                NumberCount:
+                <h2 style="color:red;">PersonList组件的总人数是:{{personList.length}}</h2>
+                ...
+                computed:{
+                    ...mapState(['sum','staff','firm','personList']),
+                }
+                ...
+                PersonList:
+                <h2 style="color:blue;">NumberCount组件的求和为:{{sum}}</h2>
+                ...
+                // 用mapState映射
+                ...mapState(['personList','sum']),
+                
+                store.js:
+                const mutations={
+                    ...
+                    // 这是添加personObj的方法之一，也可以直接在组件当中调用push方法来添加
+                    ADDPERSON(state,value){
+                        console.log('ADDPERSON function in mutations is called');
+                        state.personList.push(value)
+                    }
+                }
+              ```
+            * ![在vue-devtools里看是否成功共享数据](images/PersonList里有NumberCount的和.png)
+            * ![在vue-devtools里看是否成功共享数据](images/NumberCount里可以看见PersonList的人.png)
         
         
 
