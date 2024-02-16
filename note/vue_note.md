@@ -2891,6 +2891,38 @@
                     * 理解：value是component，用于展示页面内容。
                     * 工作过程：的浏览器的路径改变时，对应的组件就会显示。
     * 6.2 基本路由
+        * 编写路由的3步
+            * 1. 定义路由组件
+                * 创建HomePage组件和AboutPage组件
+            * 2. 注册路由
+                * ```
+                    // 该文件专门用于创建整个应用的路由器
+                    import VueRouter from "vue-router";
+                    // 引入组件
+                    import AboutPage from '../components/AboutPage'
+                    import HomePage from '../components/HomePage'
+
+                    // VueRouter是个构造函数，可以实例化来创建路由器，并暴露该路由器
+                    export default new VueRouter({
+                        // 一组一组的路由们
+                        routes:[
+                            // 一组路由
+                            {
+                                path:'/about',
+                                component:AboutPage
+                            },
+                            {
+                                path:'/home',
+                                component:HomePage
+                            }
+                        ]
+                    })
+                  ```
+            * 3. 使用路由
+                * (1). 实现切换(active-class可配置高亮样式)
+                    * ```<router-link class="list-group-item" active-class="active" to="/about">About</router-link>```
+                * (2). 指定组件的展示/呈现位置
+                    * ```<router-view></router-view>```
     * 6.3 嵌套(多级)路由
     * 6.4 路由传参
     * 6.5 编程式路由导航
