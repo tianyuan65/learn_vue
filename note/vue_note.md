@@ -2955,6 +2955,31 @@
                 * ```<router-link class="list-group-item" active-class="active" to="/home/news">News</router-link>```
             * 3. 注意点：配置路由时，子路由的写法有两种，一是不写 / ，直接写要跳转的路径，像``` path:'message' ```；二是把父路由全写上，像```path:'/home/news',```。但是在组件当中的router-link标签的to属性配置路由时，必须写完整，```to="/home/news"```
     * 6.4 路由传参
+        *  路由的query参数，两种写法，字符串写法和对象写法，详细见下方代码，效果相同。
+            * 1. 传递参数，在MessageList组件中
+                * ```
+                    <li v-for="m in messageItem" :key="m.id">
+                        <!-- 跳转路由并携带query参数，to的字符串写法，先变成js表达式识别模板字符串，然后再用es6表达变量的方式 -->
+                        <router-link :to="`/home/message/detail?id=${m.id}&title=${m.title}`">{{m.title}}</router-link>
+
+                        <!-- 跳转路由并携带query参数，to的对象写法，path路径代表跳转到的组件路径，query属性里是需要携带的参数 -->
+                        <router-link :to="{
+                            path:'/home/message/detail',
+                            query:{
+                                id:m.id,
+                                title:m.title
+                            }
+                        }">
+                            {{m.title}}
+                        </router-link>
+                    </li>
+                  ```
+                * ![组件挂载后，该组件相关的路由配置](images/MessageDetail组件挂载后，该组件相关的路由配置信息.png)
+            * 2. 在展示的组件中接收参数，在MessageDetail组件中
+                * ```
+                    $route.query.id
+                    $route.query.title
+                  ```
     * 6.5 编程式路由导航
     
 
