@@ -2924,6 +2924,36 @@
                 * (2). 指定组件的展示/呈现位置
                     * ```<router-view></router-view>```
     * 6.3 嵌套(多级)路由
+        * 1. 配置路由规则，使用children配置项
+            * ```
+                routes:[
+                    // 一组路由，一级路由的path属性值路径前面必须写/
+                    {
+                        path:'/about',
+                        component:AboutPage
+                    },
+                    {
+                        path:'/home',
+                        component:HomePage,
+                        // 通过children配置子级路由
+                        children:[
+                            // 但，若是某一个路由的子路由，前面就不加/，就是children里的东西，在底层设计时，已经帮我们加了/
+                            {
+                                path:'message',  // 一定不要写，/message
+                                component:MessageList
+                            },
+                            {
+                                // 要么上面那么写，要么把父路由的全写上，就像/home/message
+                                path:'/home/news',  // 一定不要写，/news，但可以写成/home/news
+                                component:NewsList
+                            }
+                        ]
+                    },
+                ]
+              ```
+            * 2. 跳转(要写完整路径)
+                * ```<router-link class="list-group-item" active-class="active" to="/home/news">News</router-link>```
+            * 3. 注意点：配置路由时，子路由的写法有两种，一是不写 / ，直接写要跳转的路径，像``` path:'message' ```；二是把父路由全写上，像```path:'/home/news',```。但是在组件当中的router-link标签的to属性配置路由时，必须写完整，```to="/home/news"```
     * 6.4 路由传参
     * 6.5 编程式路由导航
     
