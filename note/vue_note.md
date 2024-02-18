@@ -2955,7 +2955,7 @@
                 * ```<router-link class="list-group-item" active-class="active" to="/home/news">News</router-link>```
             * 3. 注意点：配置路由时，子路由的写法有两种，一是不写 / ，直接写要跳转的路径，像``` path:'message' ```；二是把父路由全写上，像```path:'/home/news',```。但是在组件当中的router-link标签的to属性配置路由时，必须写完整，```to="/home/news"```
     * 6.4 路由传参
-        *  路由的query参数，两种写法，字符串写法和对象写法，详细见下方代码，效果相同。
+        *  6.4.1 路由的query参数，两种写法，字符串写法和对象写法，详细见下方代码，效果相同。
             * 1. 传递参数，在MessageList组件中
                 * ```
                     <li v-for="m in messageItem" :key="m.id">
@@ -2980,6 +2980,51 @@
                     $route.query.id
                     $route.query.title
                   ```
+        * 6.4.2 路由的params参数
+            * 1. 配置路由，声明接收params参数
+                * ```
+                    {
+                        path:'/home',
+                        component:HomePage,
+                        children:[
+                            // 但，若是某一个路由的子路由，前面就不加/，就是children里的东西，在底层设计时，已经帮我们加了/
+                            {
+                                path:'message',
+                                component:MessageList,
+                                children:[
+                                    {
+                                        name:'xiangqing',
+                                        // /:id和/:title是占位符，意为声明会接收两个名为id和title的参数
+                                        path:'detail/:id/:title',
+                                        component:MessageDetail
+                                    }
+                                ]
+                            },
+                        ]
+                    }
+                  ```
+            * 2. 传递参数
+                * ```
+                    <!-- 跳转路由并携带params参数，to的字符串写法，与query不同，直接在detail后面加/，并用${} -->
+                    <router-link :to="`/home/message/detail/${m.id}/${m.title}`">{{m.title}}</router-link>
+                    <!-- 跳转路由并携带params参数，to的对象写法，使用params参数不允许使用path属性，只能使用name属性 -->
+                    <router-link :to="{
+                        name:'xiangqing',
+                        params:{
+                            id:m.id,
+                            title:m.title
+                        }
+                    }">
+                        {{m.title}}
+                    </router-link>
+                  ```
+                * **特别注意：**路由携带params参数时，若使用to的对象写法，则不能使用path配置项，必须使用name配置
+            * 3. 接收参数
+                * ```
+                    <li>msgNumber:{{$route.params.id}}</li>
+                    <li>msgTitle:{{$route.params.title}}</li>
+                  ```
+            * ![params参数](images/路由的params参数.png)
     * 6.5 编程式路由导航
     
 
