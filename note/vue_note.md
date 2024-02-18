@@ -3025,6 +3025,34 @@
                     <li>msgTitle:{{$route.params.title}}</li>
                   ```
             * ![params参数](images/路由的params参数.png)
+        * 6.4.3 路由的props配置
+            * 作用：让路由组件更方便的接收参数，第二种方法传递params参数，第三种方法传递query参数，第三种最强大。
+            * ```
+                {
+                    name:'xiangqing',
+                    // 传query参数
+                    path:'detail',
+                    // /:id和/:title是占位符，意为声明会接收两个名为id和title的参数
+                    // path:'detail/:id/:title',
+                    component:MessageDetail,
+
+                    // props的第一种写法--值为对象，该对象中的所有key-value都会以props的形式传给MessageDetail组件，但用得少，因为传递的是固定的数据，不灵活
+                    // props:{a:1,b:'hello'}
+
+                    // props的第二种写法--值为布尔值，若布尔值为true，就会把该路由组件收到的所有params参数，以props的形式传给MessageDetail组件
+                    // props:true
+
+                    // props的第三种写法--值为函数，要求函数的返回值必须是一个对象，这个返回值里面每一组的key-value组合，这是一个回调函数，会接收$route作为参数
+                    props($route){
+                        // 所以把原先写在组件里的计算属性逻辑搬到路由规则的地方，组件中会更加明晰，且传递参数的时候可以直接从$route中解构赋值出{query}，这样更方便一些
+                        return {id:$route.query.id,title:$route.query.title}
+                    },
+                    // 从$route中解构赋值出query的版本，当然这也可以连续解构赋值，我觉得这样就行了，就不写了
+                    // props({query}){
+                    //     return {id:query.id,title:query.title}
+                    // },
+                }
+              ```
     * 6.5 编程式路由导航
     
 
