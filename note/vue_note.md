@@ -3058,6 +3058,47 @@
             * 2. 浏览器的历史记录有两种写入方式：分别是push和replace，push是追加历史记录，replace是替换当前记录。路由跳转的时候默认是push
             * 3. 如何开启replace模式：```<router-link replace class="list-group-item" active-class="active" to="/about">About</router-link>```
     * 6.5 编程式路由导航
+        * 6.5.1 
+            * 1. 作用：不借助<router-link>实现路由跳转，让路由更加灵活
+            * 2. 具体编码
+                * ```
+                    <button @click="pushShow(m)">push查看</button>
+                    <button @click="replaceShow(m)">replace查看</button>
+                    // $router的两个常用的API
+                    // 将遍历后的数据m，作为参数传递到pushShow函数的形参位，记得给绑定点击事件的函数也传递参数，要不然参数默认就是event了
+                    pushShow(m){
+                        this.$router.push({
+                            name:'xiangqing',
+                            query:{
+                                id:m.id,
+                                title:m.title
+                            }
+                        }) 
+                    },
+                    replaceShow(m){
+                        this.$router.replace({
+                            name:'xiangqing',
+                            query:{
+                                id:m.id,
+                                title:m.title
+                            }
+                        })
+                    }
+                    ...
+                    <button @click="back">后退</button>
+                    <button @click="forward">前进</button>
+                    <button @click="go">test the go function</button>
+                    back(){
+                        this.$router.back()  // 后退
+                    },
+                    forward(){
+                        this.$router.forward()  // 前进
+                    },
+                    go(){
+                        // go方法可以传递数值作为参数，正数则连续前进n步，负数则连续后退n步
+                        this.$router.go(1)
+                    }
+                  ```
     
 
 
