@@ -3099,7 +3099,16 @@
                         this.$router.go(1)
                     }
                   ```
-    
+        * 6.5.2 缓存路由组件
+            * 1. 作用：让不展示的路由组件保持挂载，不被销毁
+            * 2. 具体编码：
+                * ```
+                    <!-- keep-alive标签，将需要缓存的路由包在里面，并配置include属性，属性值为需要缓存的路由组件名，没写进去的不管 -->
+                    <keep-alive include="NewsList">
+                        <!-- 占位，用于展示组件 -->
+                        <router-view></router-view>
+                    </keep-alive>
+                  ```
 
 
 * **第七章 Vue UI组件库**
