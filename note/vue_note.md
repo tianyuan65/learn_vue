@@ -3129,6 +3129,44 @@
                             clearInterval(this.timer)
                         }
                       ```
+        * 6.5.4 路由守卫
+            * 1. 全局守卫
+                * 作用：在每一次路由路径发生变化时，调用该方法指定的回调，实际项目中，用于检测用户是否登录或注册帐户，若无则无权限使用该应用。
+                * **全局前置路由守卫beforeEach方法**，在路由规则的文件中调用，方法中指定一个回调，该回调接收三个参数，to、from、next，to，顾名思义，指定去哪个路径的组件；from，来自哪里；next，放行，to和from的值为对象，因为beforeEach指定的回调会在每一次路由切换前就会调用，输出这两个可以清晰明确地看到要展示组件路径和目前所在组件路径。功能与拦截器类似，回调中可以设置判断，在实际项目中，判断条件可为从localStorage中的数据是否与用户输入的相同，是则，next()，放行；否则，提示用户重新输入用户名或密码。在目前写的about、home小例子里的话，判断若要展示的组件是NewsList或MessageList，则再判断localStorage中提前写入的name属性是否为Osborn，是则放行，否则出提示；但若要展示组件不是NewsList和MessageList中任何一个，也放行，因为要去About也不犯法。
+                    * ```
+                        // 暴露前，加个特殊的，用于谈判商量的API，全局前置路由守卫beforeEach()，
+                        // 意为每一次路由切换之前和初始化的时候，都会调用beforeEach指定的回调函数，就像御前侍卫，需要在危险来临前，就要做出及时的反应，
+                        // 指定的回调接收三个参数，to、from、next，to，顾名思义，指定去哪个路径的组件；from，来自哪里；next，放行
+                        router.beforeEach((to,from,next)=>{
+                            console.log('验证是否是路由切换前调用');
+                            console.log('to:',to);
+                            console.log('from:',from);
+                            // 判断，若要去的组件是NewsList或MessageList，
+                            if (to.path==='/home/news' || to.path==='/home/message') {
+                                // 则再判断localStorage的name属性值是否为Osborn，是则放行
+                                if (localStorage.getItem('name')==='Osborn') {
+                                    next()
+                                }else{
+                                    alert('Sorry, this is Osborn’s message area')
+                                }
+                            } else {
+                                // 若不是去NewsList或MessageList组件，而是要去别的组件，比如About，也放行
+                                next()
+                            }
+                        })
+                      ```
+                    * ![beforeEach指定的回调会在初始化时和每一次路由切换时调用](images/beforeEach，在每一次路由切换前调用.png)
+                    * ![beforeEach指定的回调内，若符合判断条件则调用next()来放行](images/beforeEach指定的回调内，调用next()放行，.png)
+                    * ![若与localStorage里的值不符，next()不会执行](images/修改localStorage的值，与条件不符，不放行.png)
+                * **全局后置守卫afterEach方法**，在初始化和每一次路由切换后调用afterEach指定的回调，但与beforeEach不同的是只接收两个参数，to和from，因为已经跳转完了，没必要让next卡着不放行了。在实际项目中，主要是在这里修改网页标题的名字，比如github官方主页的title和我的github主页的title不同，github官方主页的title肯定是GitHub，我的gitHub主页title是我设置的id。
+                     * ```
+                        // 全局后置路由守卫afterEach()，会在初始化和每一次路由切换之后调用afterEach指定的回调，但只接收两个参数，就是to和from
+                        router.afterEach((to,from)=>{
+                            console.log('afterEach',to,from);
+                            // 能调用后置路由守卫，就意味着路由路径切换已经完成，换title就行了
+                            document.title=to.meta.title || 'vue_test'
+                        })
+                      ```
 
 
 
