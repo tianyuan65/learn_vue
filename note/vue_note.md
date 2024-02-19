@@ -3167,6 +3167,39 @@
                             document.title=to.meta.title || 'vue_test'
                         })
                       ```
+            * 2. 独享守卫
+                * 配置在需要指定的路由规则里，配置项名为beforeEnter，里面的内容与全局前置守卫的内容一样，也接收to、from、next这三个参数，在下面的代码例子里，name的值必须是Osborn才可以点击查看NewsList组件。独享守卫可以喝全局后置守卫配合使用，全局前置守卫是我雇佣的小区保镖的话，独享守卫相当于是管家，可以说是严于律己的好模范。
+                * ```
+                    {
+                        name:'xinwen',
+                        // 要么上面那么写，要么把父路由的全写上，就像/home/message
+                        path:'/home/news',
+                        component:NewsList,
+                        // 路由元信息配置项，值为对象，对象里配置isAuth属性，意为是否授权，isAuth的值为布尔值
+                        meta:{isAuth:true,title:'新闻'},
+                        // 独享路由守卫，对当前新闻路由进行限制，且只有前置，没有后置
+                        beforeEnter:(to,from,next)=>{
+                                console.log('beforeEnter',to,from);
+                                // 判断，若要去的组件是NewsList或MessageList，
+                                if (to.meta.isAuth) {  //判断是否需要鉴权，这样就不用一个一个的写路径来判断了
+                                    // 则再判断localStorage的name属性值是否为Osborn，是则放行
+                                    if (localStorage.getItem('name')==='Osborn') {
+                                        // 在每次放行前写这行，在这里如果与localStorage的值相同，则换为to.meta.title的值；否则，还是当前的title
+                                        // document.title=to.meta.title || 'vue_test'  // 写两遍麻烦，直接给后置路由守卫写了
+                                        next()
+                                    }else{
+                                        alert('Sorry, this is Osborn’s message area')
+                                    }
+                                } else {
+                                    // 在每次放行前写这行，About和Home的就让点了的就更新为点击的title了
+                                    // document.title=to.meta.title || 'vue_test'  // 写两遍麻烦，直接给后置路由守卫写了
+                                    // 若不是去NewsList或MessageList组件，而是要去别的组件，比如About，也放行
+                                    next()
+                                }
+                            }
+                        }
+                  ```
+                * ![localStorage里name的值为Osborn时，符合判断条件，可以查看NewsList组件](images/beforeEnter，独享路由守卫，与判断条件相符时.png)
 
 
 
