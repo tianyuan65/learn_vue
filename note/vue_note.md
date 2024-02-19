@@ -3109,6 +3109,27 @@
                         <router-view></router-view>
                     </keep-alive>
                   ```
+        * 6.5.3 两个新的生命周期钩子
+            * 1. 作用：路由组件所独有的两个钩子，用于捕获路由组件的激活状态
+            * 2. 具体名字：
+                * (1). activated钩子，路由组件被激活时触发，可在钩子里开启定时器
+                    * ```
+                        activated(){
+                            console.log('NewsList component is activated');
+                            this.timer=setInterval(() => {
+                                this.opacity-=0.01
+                                if(this.opacity<=0) this.opacity=1
+                            }, 16);
+                        },
+                      ```
+                * (2). deactivated钩子，路由组件失活时触发，在钩子里关闭定时器
+                    * ```
+                        deactivated(){
+                            console.log('activation of NewsList component is cancelled');
+                            clearInterval(this.timer)
+                        }
+                      ```
+
 
 
 * **第七章 Vue UI组件库**
