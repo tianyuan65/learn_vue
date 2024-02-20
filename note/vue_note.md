@@ -3200,6 +3200,35 @@
                         }
                   ```
                 * ![localStorage里name的值为Osborn时，符合判断条件，可以查看NewsList组件](images/beforeEnter，独享路由守卫，与判断条件相符时.png)
+            * 3. 组件内路由守卫
+                * 配置在组件内，仅允许当前组件使用，beforeRouteEnter和beforeRouteLeave。beforeRouteEnter，是进入收尾，**通过路由规则**，决不能是程序员自己注册组件、配置组件标签，进入当前组件时被调用，接收to、from、next这三个参数，可以在函数内通过if判断进行鉴权，前提是给当前路由组件的路由规则配置鉴权isAuth配置项，最后记得调用next()来放行；beforeRouteLeave，**通过路由规则**，触发路径的变化，前端路由器检测到路径的变化，匹配规则后，离开当前组件时被调用，也接收三个参数，最后也要记得放行，否则无法呈现其他路由组件。组件内守卫也可以配合全局后置守卫一起使用，想要点击不同组件时，切换title名，就需要调用全局后置守卫指定的回调。
+                * ```
+                    // 组件内路由守卫，通过路由规则，进入该组件时被调用
+                    beforeRouteEnter(to,from,next){
+                    console.log('About-beforeRouteEnter',to,from);
+                    if (to.meta.isAuth) {  //判断是否需要鉴权，这样就不用一个一个的写路径来判断了
+                        // 则再判断localStorage的name属性值是否为Osborn，是则放行
+                        if (localStorage.getItem('name')==='Osborn') {
+                            // 放行，不写放行，无法进入当前组件，当然也无法呈现当前组件
+                            next()
+                        }else{
+                            alert('Sorry, this is Osborn’s message area')
+                        }
+                    } else {
+                        // 若不是去NewsList或MessageList组件，而是要去别的组件，比如About，也放行
+                        next()
+                    }
+                    },
+                    // 组件内路由守卫，离开该组件时被调用
+                    beforeRouteLeave(to,from,next){
+                    console.log('About-beforeRouteLeave',to,from);
+                    // 放行，不写放行，无法离开当前组件，当然也无法呈现即将跳转的路由组件
+                        next()
+                    }
+                  ```
+                * ![beforeRouteEnter，在进入组件前被调用](images/组件内守卫beforeRouteEnter，点击了About导航项，但未跳转.png)
+                * ![beforeRouteLeave，已进入组件，并放行后，离开当前组件时调用](images/beforeRouteEnter中调用next()放行后，点击别的导航项，beforeRouteLeave会被调用.png)
+                * ![在beforeRouteEnter里鉴权](images/在beforeRouteEnter也可以鉴权，但需要在路由规则中事先配置好isAuth的配置项-不匹配的结果.png)
 
 
 
