@@ -3229,7 +3229,19 @@
                 * ![beforeRouteEnter，在进入组件前被调用](images/组件内守卫beforeRouteEnter，点击了About导航项，但未跳转.png)
                 * ![beforeRouteLeave，已进入组件，并放行后，离开当前组件时调用](images/beforeRouteEnter中调用next()放行后，点击别的导航项，beforeRouteLeave会被调用.png)
                 * ![在beforeRouteEnter里鉴权](images/在beforeRouteEnter也可以鉴权，但需要在路由规则中事先配置好isAuth的配置项-不匹配的结果.png)
-
+        * 6.5.5 路由的两种工作模式
+            * 对于一个url来说，什么是hash值？#及其后面的内容就是hash值
+            * hash值不会包含在HTTP请求中，即：hash值不会带给服务器
+            * 1. hash模式：
+                * (1). 地址中永远带着#号，不美观，但我个人觉得还行。
+                * (2). 若以后将地址通过第三方手机app分享，若app校验严格，则地址会被标记为不合法。
+                * (3). 兼容性较好。
+            * 2. history模式
+                * (1). 地址干净，美观，大部分网页的地址都是这样的。
+                * (2). 兼容性和hash模式相比略差。
+                * (3). 应用部署上线时需要后端人员支持，解决刷新页面服务端404的问题。需要安装并引入connect-history-api-fallback包，在用express身上的static中间件指定静态资源前，调用use方法来调用history()。也可以用老师说的野路子nginx，但我不会，再说。
+            * ![hash模式和history模式在URL上的明显区别](images/默认的hash模式和更改的history模式.png)
+            * ![history模式一刷新就会报404的错，hash就不会，history刷新报错的解决方法在history模式的第三条](images/hash模式和history模式的对比.png)
 
 
 * **第七章 Vue UI组件库**
