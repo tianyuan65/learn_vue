@@ -3243,8 +3243,75 @@
             * ![hash模式和history模式在URL上的明显区别](images/默认的hash模式和更改的history模式.png)
             * ![history模式一刷新就会报404的错，hash就不会，history刷新报错的解决方法在history模式的第三条](images/hash模式和history模式的对比.png)
 
-
 * **第七章 Vue UI组件库**
+    * 7.1 移动端常用UI组件库
+        * 1. Vant:https://vant-ui.github.io/vant/#/zh-CN
+        * 2. Cube UI:https://didi.github.io/cube-ui/#/zh-CN
+        * 3. Mint UI:https://mint-ui.github.io/#!/zh-cn
+    * 7.2 PC端常用UI组件库
+        * 1. Element UI:https://element.eleme.cn/#/zh-CN
+        * 2. IView UI:https://www.iviewui.com/
+    * 7.3 以Element UI举例
+        * 1. 首先，安装Element UI插件库，```npm i element-ui -S```。
+        * 2. 其次，若需要完整引入，就在main.js文件中，引入并应用Element UI插件，还需要引入全部的有关Element组件库的样式。
+            * ```
+                // 完整应用
+                // 引入element-ui组件库
+                import ElementUI from 'element-ui';
+                // 引入element-ui组件库的全部样式
+                import 'element-ui/lib/theme-chalk/index.css';
+                // 应用ElementUI插件库，是将element-ui的所有组件及其相关的样式全部应用了，占用的内存较大，因此，在实际项目中需要按需引入应用
+                Vue.use(ElementUI)
+              ```
+        * 3. 再次，但即使是在实际项目中，也不可能用到组件库里的全部的组件，且全部的组件库文件容量很大，没必要完整引入。这时，就需要了解按需引入组件库中的部分组件，方式参考解构赋值，将需要的组件用{}包起来，并调用Vue的component()方法来全局注册组件，component()方法内传递两个参数，第一个是element.name，可以自主起名，会用于写组件标签；第二个是组件库里的组件名，用这种方式引入部分组件。
+        * 4. 最后，按需从组件库中引入部分组件，需要借助 babel-plugin-component，在这里安装babel-plugin-component插件即可，```npm install babel-plugin-component -D```，然后修改.babelrc文件，在文件目录中一眼就能看出没有这个文件，所以在babel.config.js中修改。在预设配置项presets中追加配置，并添加插件配置项plugins。以上步骤之后进行打包TERMINAL控制台中有可能会报错，比如找不到module babel-preset-es2015和Plugin/Preset中的文件无法暴露等，第一个的解决方法，安装babel-preset-es2015就可以了；第二个的解决方法，将向presets预设配置项里添加的```["es2015", { "modules": false }]```改为 ```["@babel/preset-env", { "modules": false }]```
+            * ```
+                module.exports = {
+                    // 预设配置项，可追加配置
+                    presets: [
+                        '@vue/cli-plugin-babel/preset',
+                        ["@babel/preset-env", { "modules": false }]
+                    ],
+                    // 插件配置项
+                    plugins: [
+                        [
+                        "component",
+                        {
+                            "libraryName": "element-ui",
+                            "styleLibraryName": "theme-chalk"
+                        }
+                        ]
+                    ]
+                }
+              ```
+        * 补充：其他的组件库的快速入手里也有如何按需引入组件的教程，比如Antd Vue，目前是4.xx版，之前学的和做的模拟项目的Antd React去看就完了，最上面列举的几个组件库也可以去了解。下面是按需引入的Button组件和DatePicker组件以及Row组件标签与原生标签对比的代码和图示
+            * ```
+                main.js
+                // 按需引入
+                import { Button, Row, DatePicker } from 'element-ui';
+                // 全局注册组件，xxx.name可以自己设置
+                Vue.component('DefaultRow', Row);
+                Vue.component('MainButton', Button);
+                Vue.component('DatePicker', DatePicker);
+                ...
+                App
+                <div>
+                    <button>原生button</button>
+                    <input type="text"><hr>
+                    <!-- 在入口文件中注册全局组件时给每个引入应用的组件起的名换上 -->
+                    <DefaultRow>
+                    <MainButton type="primary" round>主要按钮</MainButton>
+                    </DefaultRow>
+                    <DatePicker
+                    v-model="value1"
+                    type="date"
+                    placeholder="选择日期">
+                    </DatePicker>
+                </div>
+              ```
+            * ![原生标签和Element UI组件库中按需引入的组件对比](images/原生button，input和element-ui的button和input.png)
+
+
 
 * 补充
     * 不改变就不用重新调用，在中间做了一个缓存，相当于这个值vue帮你存了，你用我就给你，随时用随时给，但是就不用再重复计算了
